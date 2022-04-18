@@ -69,6 +69,12 @@ class Generators:
         # run check to make sure the bus actually has a Q node
         self.Q_node = bus[Buses.bus_key_[self.Bus]].node_Q
         # check something about gen_type?? 
+
+        ##ASSIGNING THE LAMBDA
+        self.lambda_r = bus[Buses.bus_key_[self.Bus]].lambda_r
+        self.lambda_i = bus[Buses.bus_key_[self.Bus]].lambda_i
+        # run check to make sure the bus actually has a Q node
+        self.lambda_q = bus[Buses.bus_key_[self.Bus]].lambda_q
     
     def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
         P = -self.P

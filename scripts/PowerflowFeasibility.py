@@ -199,7 +199,7 @@ class PowerFlowFeasibility:
         tol = self.tol  # chosen NR tolerance
         NR_count = 0  # current NR iteration
         check_for_zero_rows_cols = False # useful for debugging
-        conveged = False
+        converged = False
         # # # Begin Solving Via NR # # #
         # TODO: PART 1, STEP 2.2 - Complete the NR While Loop
         while NR_count < self.max_iters:

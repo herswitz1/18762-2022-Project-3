@@ -20,7 +20,7 @@ class FeasibilitySource:
         self.Ii_init = 0
         
 
-    def assign_nodes(self, ):
+    def assign_nodes(self,bus,slack):
         """Assign the additional slack bus nodes for a slack bus.
         Args:
             You decide :)
@@ -28,6 +28,12 @@ class FeasibilitySource:
             None
         """
         # TODO: You decide how to implement variables for the feasibility injections
+        self.Ifr_PQ = bus[Buses.bus_key_[self.Bus]].node_Vr
+        self.Ifi_PQ = bus[Buses.bus_key_[self.Bus]].node_Vi
+        self.Ifr_PV = bus[Buses.bus_key_[self.Bus]].node_Vr
+        self.Ifi_PV = bus[Buses.bus_key_[self.Bus]].node_Vi
+        self.Ifr_slack = bus[Buses.bus_key_[self.Bus]].node_Vr
+        self.Ifi_slack = bus[Buses.bus_key_[self.Bus]].node_Vi
         pass
 
     def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):

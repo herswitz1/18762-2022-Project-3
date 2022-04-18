@@ -39,7 +39,7 @@ class Branches:
         self.rateB = rateB
         self.rateC = rateC
 
-        # Set minimum x:
+        # Set minimum x: NOT SURE WHAT THIS PART OF THE CODE IS DURING
         if abs(self.x) < 1e-6:
             if self.x < 0:
                 self.x = -1e-6
@@ -57,6 +57,12 @@ class Branches:
         self.Vi_from_node = bus[Buses.bus_key_[self.from_bus]].node_Vi
         self.Vr_to_node = bus[Buses.bus_key_[self.to_bus]].node_Vr
         self.Vi_to_node = bus[Buses.bus_key_[self.to_bus]].node_Vi
+
+        #duals for lambda
+        self.lambda_r_from = bus[Buses.bus_key_[self.from_bus]].lambda_r
+        self.lambda_i_from = bus[Buses.bus_key_[self.from_bus]].lambda_i
+        self.lambda_r_to = bus[Buses.bus_key_[self.to_bus]].lambda_r
+        self.lambda_i_to = bus[Buses.bus_key_[self.to_bus]].lambda_i         
 
     def stamp(self, V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J):
         if not self.status:
@@ -92,9 +98,41 @@ class Branches:
     
         return (idx_Y, idx_J)
 
-    def stamp_dual(self):
-        # You need to implement this.
-        pass
+    def stamp_dual(self,V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J):
+        # You need to implement this.(IMPLEMENTING TRANSPOSE OF THE ABOVE)
+        if not self.status:
+            return (idx_Y, idx_J)
+        # Line Bs lambda
+        idx_Y = stampY(self.lambda_r_from, self.lambda_i_from, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_r_from, self.lambda_i_to, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_i_from, self.lambda_r_from, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_i_from, self.lambda_r_to, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_r_to, self.lambda_i_to, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_r_to, self.lambda_i_from, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_i_to, self.lambda_r_to, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_i_to, self.lambda_r_from, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+
+        # Line Shunts lambda
+        idx_Y = stampY(self.lambda_r_from, self.lambda_i_from, self.b/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_i_from, self.lambda_r_from, -self.b/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_r_to, self.lambda_i_to, self.b/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_i_to, self.lambda_r_to, -self.b/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+
+        if self.r == 0:
+            return (idx_Y, idx_J)
+
+        # Line Gs lambda
+        idx_Y = stampY(self.lambda_r_from, self.lambda_r_from, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_i_from, self.lambda_i_from, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_r_to, self.lambda_r_to, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_i_to, self.lambda_i_to, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_r_from, self.lambda_r_to, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_i_from, self.lambda_i_to, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_r_to, self.lambda_r_from, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        idx_Y = stampY(self.lambda_i_to, self.lambda_i_from, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+    
+        return (idx_Y, idx_J)
+        
 
     def calc_residuals(self, resid, V):
         Vr_from = V[self.Vr_from_node]

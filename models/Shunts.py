@@ -59,6 +59,10 @@ class Shunts:
         self.Vr_node = bus[Buses.bus_key_[self.Bus]].node_Vr
         self.Vi_node = bus[Buses.bus_key_[self.Bus]].node_Vi
 
+        ##dual lambda assignments
+        self.lambda_r = bus[Buses.bus_key_[self.Bus]].lambda_r
+        self.lambda_i = bus[Buses.bus_key_[self.Bus]].lambda_i
+
     def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
         idx_Y = stampY(self.Vr_node, self.Vr_node,
                                     self.G_pu, Y_val, Y_row, Y_col, idx_Y)
@@ -70,9 +74,18 @@ class Shunts:
                                     self.B_pu, Y_val, Y_row, Y_col, idx_Y)
         return (idx_Y, idx_J)
 
-    def stamp_dual(self):
-        # You need to implement this.
-        pass
+    def stamp_dual(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
+        # You need to implement this.(LINEAR SYSTEM SO JUST TAKE THE TRANSPOSE)
+        idx_Y = stampY(self.lambda_r, self.lambda_r,
+                                    self.G_pu, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_i, self.lambda_i,
+                                    self.G_pu, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_r, self.lambda_i,
+                                    self.B_pu, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_i, self.lambda_r,
+                                    -self.B_pu, Y_val, Y_row, Y_col, idx_Y)
+        return (idx_Y, idx_J)
+        
 
     def calc_residuals(self, resid, V):
         Vr = V[self.Vr_node]

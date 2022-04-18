@@ -53,6 +53,11 @@ class Loads:
         self.Vr_node = bus[Buses.bus_key_[self.Bus]].node_Vr
         self.Vi_node = bus[Buses.bus_key_[self.Bus]].node_Vi
         # check something about gen_type??
+
+        #DUEL NODES FOR LAMBDA
+        self.lambda_r = bus[Buses.bus_key_[self.Bus]].lambda_r
+        self.lambda_i = bus[Buses.bus_key_[self.Bus]].lambda_i
+
     
     def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
         Vr = V[self.Vr_node]

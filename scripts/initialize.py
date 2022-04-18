@@ -8,6 +8,8 @@ def initialize(size_Y, bus, generator, slack, flat_start=False):
             V_init[ele.node_Vi] = 0
             # TODO: You'll want to initialize all the lambda values as well...
             # HINT: A very small, positive number usually works well
+            V_init[ele.lambda_r] = .000001
+            V_init[ele.lambda_i] = .000001
         for ele in generator:
             V_init[ele.Q_node] += (ele.Qmax+ele.Qmin)/2
             # TODO: initialize the lambda associated with the Vset equation
@@ -20,6 +22,8 @@ def initialize(size_Y, bus, generator, slack, flat_start=False):
             V_init[ele.node_Vi] = ele.Vi_init
             # TODO: You'll want to initialize all the lambda values as well...
             # HINT: A very small, positive number usually works well
+            V_init[ele.lambda_r] = .000001
+            V_init[ele.lambda_i] = .000001
         for ele in generator:
             V_init[ele.Q_node] += -ele.Qinit
             # TODO: initialize the lambda associated with the Vset equation

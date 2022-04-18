@@ -39,6 +39,10 @@ class Slack:
 
         # initialize some dual nodes
         # TODO - you can name them as you please
+        self.lambda_slack_Vr = None
+        self.lambda_slack_Vi = None
+        self.lambda_slack_Ir = None
+        self.lambda_slack_Ii = None
 
 
     def assign_nodes(self, bus):
@@ -51,9 +55,16 @@ class Slack:
         self.Vi_node = bus[Buses.bus_key_[self.Bus]].node_Vi
         self.Slack_Ir_node = Buses._node_index.__next__()
         self.Slack_Ii_node = Buses._node_index.__next__()
+        ###DO I NEED TO ADD FEAABILITY NODES
+        # self.slack_Ifr = Buses._node_index.__next__()
+        # self.slack_Ifi = Buses._node_index.__next__()
 
-    def assign_dual_nodes(self,):
+    def assign_dual_nodes(self,bus):
         # You need to implement this
+        self.lambda_slack_r = bus[Buses.bus_key_[self.Bus]].lambda_r
+        self.lambda_slack_i = bus[Buses.bus_key_[self.Bus]].lambda_i
+        self.lambda_slack_Ir = Buses._node_index.__next__()
+        self.lambda_slack_Ii = Buses._node_index.__next__()
         pass
 
     def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
@@ -70,9 +81,22 @@ class Slack:
 
         return (idx_Y, idx_J)
 
-    def stamp_dual(self):
+    def stamp_dual(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
         # You need to implement this.
-        pass
+        #linear so take the transpose(using lambda and flipted row and colume)
+         # slack currents leaving their nodes
+        idx_Y = stampY(self.lambda_slack_Ir, self.lambda_slack_r, 1, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_slack_Ii, self.lambda_slack_i, 1, Y_val, Y_row, Y_col, idx_Y)
+
+        # enforce slack constraints
+        idx_Y = stampY(self.lambda_slack_r, self.lambda_slack_Ir, 1, Y_val, Y_row, Y_col, idx_Y)
+        idx_J = stampJ(self.lambda_slack_r, self.Vr_set, J_val, J_row, idx_J)
+
+        idx_Y = stampY(self.lambda_slack_i, self.lambda_slack_Ii, 1, Y_val, Y_row, Y_col, idx_Y)
+        idx_J = stampJ(self.lambda_slack_i, self.Vi_set, J_val, J_row, idx_J)
+
+        return (idx_Y, idx_J)
+        
 
     def calc_slack_PQ(self, V_sol):
         Ir = V_sol[self.Slack_Ir_node]

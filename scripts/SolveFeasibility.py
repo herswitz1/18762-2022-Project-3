@@ -37,7 +37,7 @@ def solve_feasibility(TESTCASE, SETTINGS):
     #       for this new model
     feasibility_sources = []
     for ele in bus:
-        feasibility_sources.append(FeasibilitySource(ele.Bus))
+        feasibility_sources.append(FeasibilitySource(ele.Bus))#FOR EACH BUS IT ADDES AN INFEAVABLE SOURCE
 
     # # # Solver Settings # # #
     tol = SETTINGS['Tolerance']  # NR solver tolerance
@@ -63,7 +63,7 @@ def solve_feasibility(TESTCASE, SETTINGS):
     # Assign nodes for the feasibility sources
     for ele in feasibility_sources:
         # You might need some arguments for this function
-        ele.assign_nodes()
+        ele.assign_nodes(bus,slack)
 
     # set system node indexes for all other devices
     # HINT: in addition to telling each device the Vr and Vi node indices
@@ -94,7 +94,7 @@ def solve_feasibility(TESTCASE, SETTINGS):
     # TODO: PART 1, STEP 2 - Complete the PowerFlowFeasibility class and build your run_feas_analysis function to solve Equivalent
     #  Circuit Formulation powerflow. The function will return a final solution vector v. Remove run_pf and the if
     #  condition once you've finished building your solver.
-    run_feas = False
+    run_feas = True
     if run_feas:
         v = feas_solver.run_feas_analysis(v_init, bus, slack, generator, transformer, branch, shunt, load, feasibility_sources)
 

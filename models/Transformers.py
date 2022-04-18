@@ -62,6 +62,11 @@ class Transformers:
         self.Vi_from_node = bus[Buses.bus_key_[self.from_bus]].node_Vi
         self.Vr_to_node = bus[Buses.bus_key_[self.to_bus]].node_Vr
         self.Vi_to_node = bus[Buses.bus_key_[self.to_bus]].node_Vi
+
+        self.lambda_r_from = bus[Buses.bus_key_[self.from_bus]].lambda_r
+        self.lambda_i_from = bus[Buses.bus_key_[self.from_bus]].lambda_i
+        self.lambda_r_to = bus[Buses.bus_key_[self.to_bus]].lambda_r
+        self.lambda_i_to = bus[Buses.bus_key_[self.to_bus]].lambda_i 
         if global_vars.xfmr_model == 1:
             self.Iaux_r_node = Buses._node_index.__next__()
             self.Iaux_i_node = Buses._node_index.__next__()
@@ -69,6 +74,12 @@ class Transformers:
             self.Vaux_i_node = Buses._node_index.__next__()
             # If you use this xfmr model, you're going to need to add
             # lambda indices for these extra nodes constraints.
+            ###EXTREA NODES JUST INCASE
+            self.Iaux_r_lambda = Buses._node_index.__next__()
+            self.Iaux_i_lambda = Buses._node_index.__next__()
+            self.Vaux_r_lambda = Buses._node_index.__next__()
+            self.Vaux_i_lambda = Buses._node_index.__next__()
+
 
     def stamp(self, V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J):
         if not self.status:
@@ -139,7 +150,7 @@ class Transformers:
             trsin = self.tr*np.sin(self.ang*np.pi/180.0)
             # I_aux_r leaving Vr_from_node
             idx_Y = stampY(self.Vr_from_node, self.Iaux_r_node, 1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # I_aux_i leaving Vi_from_node
+            # I_aux_i leaving lambda_i_from
             idx_Y = stampY(self.Vi_from_node, self.Iaux_i_node, 1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
             # Vr_from setpoint
             idx_Y = stampY(self.Iaux_r_node, self.Vr_from_node, -1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
@@ -181,9 +192,60 @@ class Transformers:
         
         return (idx_Y, idx_J)
 
-    def stamp_dual(self):
+    def stamp_dual(self, V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J):
         # You need to implement this.
-        pass
+        #since transformer is linear it is just the transpose of the obve except 
+        if not self.status:
+            return (idx_Y, idx_J)
+        else:
+            # Amrit's preferred transformer model,
+            # where you do need to add extra variables
+            trcos = self.tr*np.cos(self.ang*np.pi/180.0)
+            trsin = self.tr*np.sin(self.ang*np.pi/180.0)
+            # I_aux_r leaving lambda_r_from
+            idx_Y = stampY(self.lambda_r_from, self.Iaux_r_lambda, -1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            # I_aux_i leaving lambda_i_from
+            idx_Y = stampY(self.lambda_i_from, self.Iaux_i_lambda, -1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            # Vr_from setpoint
+            idx_Y = stampY(self.Iaux_r_lambda, self.lambda_r_from, 1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Iaux_r_lambda, self.Vaux_r_lambda, -trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Iaux_r_lambda, self.Vaux_i_lambda, trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            # Vi_from setpoint
+            idx_Y = stampY(self.Iaux_i_lambda, self.lambda_i_from, 1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Iaux_i_lambda, self.Vaux_r_lambda, -trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Iaux_i_lambda, self.Vaux_i_lambda, -trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            # Vaux_r KCL
+            idx_Y = stampY(self.Vaux_r_lambda, self.Iaux_r_lambda, trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_lambda, self.Iaux_i_lambda, trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_lambda, self.Vaux_r_lambda, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_lambda, self.lambda_r_to, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_lambda, self.Vaux_i_lambda, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_lambda, self.lambda_i_to, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_lambda, self.Vaux_i_lambda, self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            # Vaux_i KCL
+            idx_Y = stampY(self.Vaux_i_lambda, self.Iaux_r_lambda, -trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_lambda, self.Iaux_i_lambda, trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_lambda, self.Vaux_i_lambda, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_lambda, self.lambda_i_to, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_lambda, self.Vaux_r_lambda, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_lambda, self.lambda_r_to, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_lambda, self.Vaux_r_lambda, -self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            
+            # Vto losses
+            idx_Y = stampY(self.lambda_r_to, self.lambda_r_to, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_r_to, self.Vaux_r_lambda, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)            
+            idx_Y = stampY(self.lambda_r_to, self.lambda_i_to, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_r_to, self.Vaux_i_lambda, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_r_to, self.lambda_i_to, self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+
+            idx_Y = stampY(self.lambda_i_to, self.lambda_i_to, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_i_to, self.Vaux_i_lambda, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_i_to, self.lambda_r_to, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_i_to, self.Vaux_r_lambda, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_i_to, self.lambda_r_to, -self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+        
+        return (idx_Y, idx_J)
+
 
     def calc_residuals(self, resid, V):
         Vrf = V[self.Vr_from_node]

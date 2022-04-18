@@ -1,6 +1,7 @@
 from __future__ import division
 from itertools import count
 import numpy as np
+from pytz import NonExistentTimeError
 
 
 class Buses:
@@ -38,9 +39,20 @@ class Buses:
         self.node_Vr = None  # real voltage node at a bus
         self.node_Vi = None  # imaginary voltage node at a bus
         self.node_Q = None  # reactive power or voltage contstraint node at a bus
+        #self.node_Ifr = None
+        #self.node_Ifi = None
+        #self.node_Ifq = None
 
         # initialize dual nodes
         # TODO - you can name them as you please
+        self.lambda_r = None
+        self.lambda_i = None
+        self.lambda_q = None
+        #self.lambda_Ifr = None
+        #self.lambda_Ifi = None
+        #self.lambda_Ifq = None
+
+        ##DO I NEED TO ADD INITIALIZATIONS FOR INFEASABILITY CURRENTS
 
         # initialize the bus key
         self.idAllBuses = self._idsAllBuses.__next__()
@@ -63,12 +75,18 @@ class Buses:
         if self.Type == 1 or self.Type == 3:
             self.node_Vr = self._node_index.__next__()
             self.node_Vi = self._node_index.__next__()
+            #self.node_Ifr = self._node_index.__next__()
+            #self.node_Ifi = self._node_index.__next__()
 
         # If PV Bus
         elif self.Type == 2:
             self.node_Vr = self._node_index.__next__()
             self.node_Vi = self._node_index.__next__()
             self.node_Q = self._node_index.__next__()
+            # self.node_Ifr = self._node_index.__next__()
+            # self.node_Ifi = self._node_index.__next__()
+            # self.node_Ifq = self._node_index.__next__()
+
         
     def assign_dual_nodes(self):
         """Assign nodes for the dual variables (lambdas)
@@ -79,6 +97,22 @@ class Buses:
         # TODO
         # You need to do this
         # Remember, every equality constraint in your system needs a lambda variable.
+        # If Slack or PQ Bus
+        if self.Type == 1 or self.Type == 3:
+            self.lambda_r = self._node_index.__next__()
+            self.lambda_i = self._node_index.__next__()
+            # self.lambda_Ifr = self._node_index.__next__()
+            # self.lambda_Ifi = self._node_index.__next__()
+
+        # If PV Bus
+        elif self.Type == 2:
+            self.lambda_r = self._node_index.__next__()
+            self.lambda_i = self._node_index.__next__()
+            self.lambda_q = self._node_index.__next__()
+            # self.lambda_Ifr = self._node_index.__next__()
+            # self.lambda_Ifi = self._node_index.__next__()
+            # self.lambda_Ifq = self._node_index.__next__()
+
         pass
 
     def calc_Vphasor(self, V_sol):
