@@ -39,15 +39,16 @@ class Buses:
         self.node_Vr = None  # real voltage node at a bus
         self.node_Vi = None  # imaginary voltage node at a bus
         self.node_Q = None  # reactive power or voltage contstraint node at a bus
-        #self.node_Ifr = None
-        #self.node_Ifi = None
-        #self.node_Ifq = None
+        
+        self.node_Ifr = None
+        self.node_Ifi = None
+        self.node_Ifq = None
 
         # initialize dual nodes
         # TODO - you can name them as you please
-        self.lambda_r = None
-        self.lambda_i = None
-        self.lambda_q = None
+        self.lambda_r_node = None
+        self.lambda_i_node = None
+        self.lambda_q_node = None
         #self.lambda_Ifr = None
         #self.lambda_Ifi = None
         #self.lambda_Ifq = None
@@ -75,17 +76,17 @@ class Buses:
         if self.Type == 1 or self.Type == 3:
             self.node_Vr = self._node_index.__next__()
             self.node_Vi = self._node_index.__next__()
-            #self.node_Ifr = self._node_index.__next__()
-            #self.node_Ifi = self._node_index.__next__()
+            self.node_Ifr = self._node_index.__next__()
+            self.node_Ifi = self._node_index.__next__()
 
         # If PV Bus
         elif self.Type == 2:
             self.node_Vr = self._node_index.__next__()
             self.node_Vi = self._node_index.__next__()
             self.node_Q = self._node_index.__next__()
-            # self.node_Ifr = self._node_index.__next__()
-            # self.node_Ifi = self._node_index.__next__()
-            # self.node_Ifq = self._node_index.__next__()
+            self.node_Ifr = self._node_index.__next__()
+            self.node_Ifi = self._node_index.__next__()
+            self.node_Ifq = self._node_index.__next__()
 
         
     def assign_dual_nodes(self):
@@ -99,16 +100,16 @@ class Buses:
         # Remember, every equality constraint in your system needs a lambda variable.
         # If Slack or PQ Bus
         if self.Type == 1 or self.Type == 3:
-            self.lambda_r = self._node_index.__next__()
-            self.lambda_i = self._node_index.__next__()
+            self.lambda_r_node = self._node_index.__next__()
+            self.lambda_i_node = self._node_index.__next__()
             # self.lambda_Ifr = self._node_index.__next__()
             # self.lambda_Ifi = self._node_index.__next__()
 
         # If PV Bus
         elif self.Type == 2:
-            self.lambda_r = self._node_index.__next__()
-            self.lambda_i = self._node_index.__next__()
-            self.lambda_q = self._node_index.__next__()
+            self.lambda_r_node = self._node_index.__next__()
+            self.lambda_i_node = self._node_index.__next__()
+            self.lambda_q_node = self._node_index.__next__()
             # self.lambda_Ifr = self._node_index.__next__()
             # self.lambda_Ifi = self._node_index.__next__()
             # self.lambda_Ifq = self._node_index.__next__()

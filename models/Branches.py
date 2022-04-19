@@ -59,10 +59,10 @@ class Branches:
         self.Vi_to_node = bus[Buses.bus_key_[self.to_bus]].node_Vi
 
         #duals for lambda
-        self.lambda_r_from = bus[Buses.bus_key_[self.from_bus]].lambda_r
-        self.lambda_i_from = bus[Buses.bus_key_[self.from_bus]].lambda_i
-        self.lambda_r_to = bus[Buses.bus_key_[self.to_bus]].lambda_r
-        self.lambda_i_to = bus[Buses.bus_key_[self.to_bus]].lambda_i         
+        self.lambda_r_from = bus[Buses.bus_key_[self.from_bus]].lambda_r_node
+        self.lambda_i_from = bus[Buses.bus_key_[self.from_bus]].lambda_i_node
+        self.lambda_r_to = bus[Buses.bus_key_[self.to_bus]].lambda_r_node
+        self.lambda_i_to = bus[Buses.bus_key_[self.to_bus]].lambda_i_node         
 
     def stamp(self, V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J):
         if not self.status:

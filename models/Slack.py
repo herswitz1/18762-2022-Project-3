@@ -39,10 +39,10 @@ class Slack:
 
         # initialize some dual nodes
         # TODO - you can name them as you please
-        self.lambda_slack_Vr = None
-        self.lambda_slack_Vi = None
-        self.lambda_slack_Ir = None
-        self.lambda_slack_Ii = None
+        self.lambda_slack_Vr_node = None
+        self.lambda_slack_Vi_node = None
+        self.lambda_slack_Ir_node = None
+        self.lambda_slack_Ii_node = None
 
 
     def assign_nodes(self, bus):
@@ -50,21 +50,21 @@ class Slack:
         Returns:
             None
         """
-        # HINT: you might want to change this
+        # HINT: you might want to change this:(CAN THIS HINT BE ELABORATED ON)
         self.Vr_node = bus[Buses.bus_key_[self.Bus]].node_Vr
         self.Vi_node = bus[Buses.bus_key_[self.Bus]].node_Vi
         self.Slack_Ir_node = Buses._node_index.__next__()
         self.Slack_Ii_node = Buses._node_index.__next__()
         ###DO I NEED TO ADD FEAABILITY NODES
-        # self.slack_Ifr = Buses._node_index.__next__()
-        # self.slack_Ifi = Buses._node_index.__next__()
+        self.slack_Ifr_node = Buses._node_index.__next__()
+        self.slack_Ifi_node = Buses._node_index.__next__()
 
     def assign_dual_nodes(self,bus):
         # You need to implement this
-        self.lambda_slack_r = bus[Buses.bus_key_[self.Bus]].lambda_r
-        self.lambda_slack_i = bus[Buses.bus_key_[self.Bus]].lambda_i
-        self.lambda_slack_Ir = Buses._node_index.__next__()
-        self.lambda_slack_Ii = Buses._node_index.__next__()
+        self.lambda_slack_r_node = bus[Buses.bus_key_[self.Bus]].lambda_r_node
+        self.lambda_slack_i_node = bus[Buses.bus_key_[self.Bus]].lambda_i_node
+        self.lambda_slack_Ir_node = Buses._node_index.__next__()
+        self.lambda_slack_Ii_node = Buses._node_index.__next__()
         pass
 
     def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
@@ -74,9 +74,11 @@ class Slack:
 
         # enforce slack constraints
         idx_Y = stampY(self.Slack_Ir_node, self.Vr_node, 1, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.Slack_Ir_node, self.slack_Ifr_node, 1, Y_val, Y_row, Y_col, idx_Y)
         idx_J = stampJ(self.Slack_Ir_node, self.Vr_set, J_val, J_row, idx_J)
 
         idx_Y = stampY(self.Slack_Ii_node, self.Vi_node, 1, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.Slack_Ir_node, self.slack_Ifi_node, 1, Y_val, Y_row, Y_col, idx_Y)
         idx_J = stampJ(self.Slack_Ii_node, self.Vi_set, J_val, J_row, idx_J)
 
         return (idx_Y, idx_J)
@@ -85,15 +87,16 @@ class Slack:
         # You need to implement this.
         #linear so take the transpose(using lambda and flipted row and colume)
          # slack currents leaving their nodes
-        idx_Y = stampY(self.lambda_slack_Ir, self.lambda_slack_r, 1, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.lambda_slack_Ii, self.lambda_slack_i, 1, Y_val, Y_row, Y_col, idx_Y)
+         #NOT SURE HOW TO DEAL WITH FEASABILITY TRANSPOSE FOR SLACK
+        idx_Y = stampY(self.lambda_slack_Ir_node, self.lambda_slack_r_node, 1, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_slack_Ii_node, self.lambda_slack_i_node, 1, Y_val, Y_row, Y_col, idx_Y)
 
         # enforce slack constraints
-        idx_Y = stampY(self.lambda_slack_r, self.lambda_slack_Ir, 1, Y_val, Y_row, Y_col, idx_Y)
-        idx_J = stampJ(self.lambda_slack_r, self.Vr_set, J_val, J_row, idx_J)
+        idx_Y = stampY(self.lambda_slack_r_node, self.lambda_slack_Ir_node, 1, Y_val, Y_row, Y_col, idx_Y)
+        idx_J = stampJ(self.lambda_slack_r_node, self.Vr_set, J_val, J_row, idx_J)
 
-        idx_Y = stampY(self.lambda_slack_i, self.lambda_slack_Ii, 1, Y_val, Y_row, Y_col, idx_Y)
-        idx_J = stampJ(self.lambda_slack_i, self.Vi_set, J_val, J_row, idx_J)
+        idx_Y = stampY(self.lambda_slack_i_node, self.lambda_slack_Ii_node, 1, Y_val, Y_row, Y_col, idx_Y)
+        idx_J = stampJ(self.lambda_slack_i_node, self.Vi_set, J_val, J_row, idx_J)
 
         return (idx_Y, idx_J)
         

@@ -43,7 +43,7 @@ class PowerFlowFeasibility:
     def check_error(self, v, v_sol):
         return np.amax(np.abs(v - v_sol))
 
-    def stamp_linear(self, branch, transformer, shunt, slack, v_init):
+    def stamp_linear(self, branch, transformer, shunt, slack,feasibility_sources, v_init):
         size_Y = v_init.shape[0]
         nnz = 100*size_Y
         Ylin_row = np.zeros(nnz, dtype=int)
@@ -63,6 +63,9 @@ class PowerFlowFeasibility:
             (idx_Y, idx_J) = ele.stamp(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
         for ele in slack:
             (idx_Y, idx_J) = ele.stamp(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
+        ##NOT SURE ABOUT THE FEASIBILITY SOURCE
+        for ele in feasibility_sources:
+            (idx_Y, idx_J) = ele.stamp(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
         
         nnz_indices = np.nonzero(Ylin_val)[0]
         Ylin = csc_matrix((Ylin_val[nnz_indices], (Ylin_row[nnz_indices], Ylin_col[nnz_indices])), shape=(size_Y, size_Y), dtype=np.float64)
@@ -71,12 +74,42 @@ class PowerFlowFeasibility:
         Jlin = csc_matrix((Jlin_val, (Jlin_row, Jlin_col)), shape=(size_Y, 1), dtype=np.float64)
         return (Ylin, Jlin)
 
-    def stamp_linear_dual(self,):
+    def stamp_linear_dual(self, branch, transformer, shunt, slack,feasibility_sources, v_init):
         # Generate the dual stamps for all your linear devices.
         # You should decide the necessary arguments.
-        pass 
+        ###USING EXACT SAME CODE AS ABOVE BUT INSTEAD just call stamp dual function
+        size_Y = v_init.shape[0]
+        nnz = 100*size_Y
+        Ylin_row = np.zeros(nnz, dtype=int)
+        Ylin_col = np.zeros(nnz, dtype=int)
+        Ylin_val = np.zeros(nnz, dtype=np.double)
+        Jlin_row = np.zeros(4*size_Y, dtype=int)
+        Jlin_val = np.zeros(4*size_Y, dtype=np.double)
+        
+        idx_Y = 0
+        idx_J = 0
 
-    def stamp_nonlinear(self, generator, load, v_init):
+        for ele in branch:
+            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
+        for ele in transformer:
+            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
+        for ele in shunt:
+            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
+        for ele in slack:
+            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
+        ##NOT SURE ABOUT THE FEASIBILITY SOURCE
+        for ele in feasibility_sources:
+            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
+        
+        nnz_indices = np.nonzero(Ylin_val)[0]
+        Ylin_D = csc_matrix((Ylin_val[nnz_indices], (Ylin_row[nnz_indices], Ylin_col[nnz_indices])), shape=(size_Y, size_Y), dtype=np.float64)
+        nnz_indices = np.nonzero(Jlin_val)[0]
+        Jlin_col = np.zeros(Jlin_row.shape, dtype=np.int)
+        Jlin_D = csc_matrix((Jlin_val, (Jlin_row, Jlin_col)), shape=(size_Y, 1), dtype=np.float64)
+        return (Ylin_D, Jlin_D)
+        
+
+    def stamp_nonlinear(self, generator, load,feasibility_sources, v_init):
         size_Y = v_init.shape[0]
         nnz = 100*size_Y
         Ynlin_row = np.zeros(nnz, dtype=int)
@@ -92,6 +125,9 @@ class PowerFlowFeasibility:
             (idx_Y, idx_J) = ele.stamp(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
         for ele in load:
             (idx_Y, idx_J) = ele.stamp(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
+        ##NOT SURE ABOUT THE FEASIBILITY SOURCE
+        for ele in feasibility_sources:
+            (idx_Y, idx_J) = ele.stamp(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
 
         nnz_indices = np.nonzero(Ynlin_val)[0]
         Ynlin = csc_matrix((Ynlin_val[nnz_indices], (Ynlin_row[nnz_indices], Ynlin_col[nnz_indices])), shape=(size_Y, size_Y), dtype=np.float64)
@@ -100,10 +136,36 @@ class PowerFlowFeasibility:
         Jnlin = csc_matrix((Jnlin_val, (Jnlin_row, Jlin_col)), shape=(size_Y, 1), dtype=np.float64)
         return (Ynlin, Jnlin)
 
-    def stamp_nonlinear_dual(self,):
+    def stamp_nonlinear_dual(self, generator, load,feasibility_sources, v_init):
         # Generate the dual stamps for all your nonlinear devices.
         # You should decide the necessary arguments.
-        pass 
+        ##USING SAME CODE AS ABOVE JUST INSTEAD OF CALLING STAMP CALL STAMP_DUAL
+        size_Y = v_init.shape[0]
+        nnz = 100*size_Y
+        Ynlin_row = np.zeros(nnz, dtype=int)
+        Ynlin_col = np.zeros(nnz, dtype=int)
+        Ynlin_val = np.zeros(nnz, dtype=np.double)
+        Jnlin_row = np.zeros(4*size_Y, dtype=int)
+        Jnlin_val = np.zeros(4*size_Y, dtype=np.double)
+        
+        idx_Y = 0
+        idx_J = 0
+
+        for ele in generator:
+            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
+        for ele in load:
+            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
+        ##NOT SURE ABOUT THE FEASIBILITY SOURCE
+        for ele in feasibility_sources:
+            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
+
+        nnz_indices = np.nonzero(Ynlin_val)[0]
+        Ynlin_D = csc_matrix((Ynlin_val[nnz_indices], (Ynlin_row[nnz_indices], Ynlin_col[nnz_indices])), shape=(size_Y, size_Y), dtype=np.float64)
+        nnz_indices = np.nonzero(Jnlin_val)[0]
+        Jlin_col = np.zeros(Jnlin_row.shape, dtype=np.int)
+        Jnlin_D = csc_matrix((Jnlin_val, (Jnlin_row, Jlin_col)), shape=(size_Y, 1), dtype=np.float64)
+        return (Ynlin_D, Jnlin_D)
+         
 
     def calc_resid_primal(self, v, generator, load, slack, branch, transformer, shunt):
         # This calculates the residuals of your constraint equations.
@@ -185,13 +247,15 @@ class PowerFlowFeasibility:
             max_vstep = np.inf
 
         # # # Stamp Linear Power Grid Elements into Y matrix # # #
-        Ylin, Jlin = self.stamp_linear(branch, transformer, shunt, slack, v_init)
+        Ylin, Jlin = self.stamp_linear(branch, transformer, shunt, slack, feasibility_sources, v_init)
 
         # TODO: PART 1, STEP 2.1 - Complete the stamp_linear_dual function which create the dual stamps
         #  associated with all of the linear elements of the network.
         #  This function should call the stamp_dual function of each linear element and return a Y matrix of dual stamps.
         #  You need to decide the input arguments and return values.
-        self.stamp_linear_dual()
+        Ylin_D, Jlin_D = self.stamp_linear_dual(branch, transformer, shunt, slack, feasibility_sources, v_init)
+
+        
 
         # # # Initialize While Loop (NR) Variables # # #
         # Feel free to change these if you'd like
@@ -211,14 +275,14 @@ class PowerFlowFeasibility:
             # TODO: PART 1, STEP 2.3 - Complete the stamp_nonlinear_dual function which creates the dual stamps for
             #  the nonlinear elements. This function should call a stamp_dual function of each nonlinear element and return
             #  an updated Y matrix. You need to decide the input arguments and return values.
-            self.stamp_linear_dual()
+            (Ynlin_D, Jnlin_D) =self.stamp_linear_dual(generator, load, v)
 
             # # # Solve The System # # #
             # TODO: PART 1, STEP 2.4 - Complete the solve function which solves system of equations Yv = J. The
             #  function should return a new v_sol.
             #  You need to decide the input arguments and return values.
-            Y = Ynlin + Ylin
-            J = Jnlin + Jlin
+            Y = Ynlin + Ylin + Ylin_D + Ynlin_D
+            J = Jnlin + Jlin + Jlin_D + Jnlin_D
             if check_for_zero_rows_cols:
                 zero_rows = []
                 zero_cols = []

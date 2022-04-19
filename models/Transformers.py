@@ -63,10 +63,10 @@ class Transformers:
         self.Vr_to_node = bus[Buses.bus_key_[self.to_bus]].node_Vr
         self.Vi_to_node = bus[Buses.bus_key_[self.to_bus]].node_Vi
 
-        self.lambda_r_from = bus[Buses.bus_key_[self.from_bus]].lambda_r
-        self.lambda_i_from = bus[Buses.bus_key_[self.from_bus]].lambda_i
-        self.lambda_r_to = bus[Buses.bus_key_[self.to_bus]].lambda_r
-        self.lambda_i_to = bus[Buses.bus_key_[self.to_bus]].lambda_i 
+        self.lambda_r_from = bus[Buses.bus_key_[self.from_bus]].lambda_r_node
+        self.lambda_i_from = bus[Buses.bus_key_[self.from_bus]].lambda_i_node
+        self.lambda_r_to = bus[Buses.bus_key_[self.to_bus]].lambda_r_node
+        self.lambda_i_to = bus[Buses.bus_key_[self.to_bus]].lambda_i_node 
         if global_vars.xfmr_model == 1:
             self.Iaux_r_node = Buses._node_index.__next__()
             self.Iaux_i_node = Buses._node_index.__next__()
@@ -194,7 +194,8 @@ class Transformers:
 
     def stamp_dual(self, V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J):
         # You need to implement this.
-        #since transformer is linear it is just the transpose of the obve except 
+        #since transformer is linear it is just the transpose of the obve except
+        # SO I ACTUALLY DID NOT FLIP I AND J I JUST INVERTED VALUE, ONLY G WAS LEFT THE SAME IS THIS EFFECTIVELY THE SAME 
         if not self.status:
             return (idx_Y, idx_J)
         else:
