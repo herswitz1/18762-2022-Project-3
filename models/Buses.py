@@ -83,8 +83,8 @@ class Buses:
             self.node_Vr = self._node_index.__next__()
             self.node_Vi = self._node_index.__next__()
             self.node_Q = self._node_index.__next__()
-            self.node_Ifr = self._node_index.__next__()
-            self.node_Ifi = self._node_index.__next__()
+            # self.node_Ifr = self._node_index.__next__()
+            # self.node_Ifi = self._node_index.__next__()
             #self.node_Ifq = self._node_index.__next__()
 
         

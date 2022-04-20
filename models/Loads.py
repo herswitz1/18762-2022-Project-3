@@ -53,8 +53,8 @@ class Loads:
         self.Vr_node = bus[Buses.bus_key_[self.Bus]].node_Vr
         self.Vi_node = bus[Buses.bus_key_[self.Bus]].node_Vi
         # check something about gen_type??
-        self.Ifr_node = bus[Buses.bus_key_[self.Bus]].node_Ifr
-        self.Ifi_node = bus[Buses.bus_key_[self.Bus]].node_Ifi
+        #self.Ifr_node = bus[Buses.bus_key_[self.Bus]].node_Ifr
+        #self.Ifi_node = bus[Buses.bus_key_[self.Bus]].node_Ifi
         #DUEL NODES FOR LAMBDA
         self.lambda_r_node = bus[Buses.bus_key_[self.Bus]].lambda_r_node
         self.lambda_i_node = bus[Buses.bus_key_[self.Bus]].lambda_i_node
@@ -63,29 +63,29 @@ class Loads:
     def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
         Vr = V[self.Vr_node]
         Vi = V[self.Vi_node]
-        Ifr = V[self.Ifr_node]
-        Ifi = V[self.Ifi_node]
+        # Ifr = V[self.Ifr_node]
+        # Ifi = V[self.Ifi_node]
 
-        Irg_hist = (self.P*Vr+self.Q*Vi)/(Vr**2+Vi**2) + Ifr
+        Irg_hist = (self.P*Vr+self.Q*Vi)/(Vr**2+Vi**2) 
         dIrldVr = ((self.P*(Vi**2-Vr**2) - 2*self.Q*Vr*Vi)/(Vr**2+Vi**2)**2) 
         dIrldVi = ((self.Q*(Vr**2-Vi**2) - 2*self.P*Vr*Vi)/(Vr**2+Vi**2)**2) 
-        dIrldIfr = 1
-        Vr_J_stamp = -Irg_hist + (dIrldVr)*Vr + (dIrldVi)*Vi +Ifr*dIrldIfr
+        
+        Vr_J_stamp = -Irg_hist + (dIrldVr)*Vr + (dIrldVi)*Vi #+Ifr*dIrldIfr
         
         idx_Y = stampY(self.Vr_node, self.Vr_node, dIrldVr, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.Vr_node, self.Vi_node, dIrldVi, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.Vr_node, self.Ifr_node, dIrldIfr, Y_val, Y_row, Y_col, idx_Y)
+        #idx_Y = stampY(self.Vr_node, self.Ifr_node, dIrldIfr, Y_val, Y_row, Y_col, idx_Y)
         idx_J = stampJ(self.Vr_node, Vr_J_stamp, J_val, J_row, idx_J)
 
-        Iig_hist = (self.P*Vi-self.Q*Vr)/(Vr**2+Vi**2) +Ifi
+        Iig_hist = (self.P*Vi-self.Q*Vr)/(Vr**2+Vi**2) #+Ifi
         dIildVi = -dIrldVr
         dIildVr = dIrldVi
-        dIildIfi = 1
-        Vi_J_stamp = -Iig_hist + (dIildVr)*Vr + (dIildVi)*Vi +Ifi*dIildIfi
+        #dIildIfi = 1
+        Vi_J_stamp = -Iig_hist + (dIildVr)*Vr + (dIildVi)*Vi #+Ifi*dIildIfi
 
         idx_Y = stampY(self.Vi_node, self.Vr_node, dIildVr, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.Vi_node, self.Vi_node, dIildVi, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.Vi_node, self.Ifi_node, dIildIfi, Y_val, Y_row, Y_col, idx_Y)
+        #idx_Y = stampY(self.Vi_node, self.Ifi_node, dIildIfi, Y_val, Y_row, Y_col, idx_Y)
         idx_J = stampJ(self.Vi_node, Vi_J_stamp, J_val, J_row, idx_J)
 
         return (idx_Y, idx_J)
@@ -97,10 +97,10 @@ class Loads:
         Lrl = V[self.lambda_r_node]
         Lil = V[self.lambda_i_node]
         #NOT SURE IF I AM USING THESE RIGHT
-        Ifr = V[self.Ifr_node]
-        Ifi = V[self.Ifi_node]
+        #Ifr = V[self.Ifr_node]
+        #Ifi = V[self.Ifi_node]
 
-        Irg_hist = (self.P*Vr+self.Q*Vi)/(Vr**2+Vi**2) + Ifr
+        Irg_hist = (self.P*Vr+self.Q*Vi)/(Vr**2+Vi**2) #+ Ifr
         dIrldVr = ((self.P*(Vi**2-Vr**2) - 2*self.Q*Vr*Vi)/(Vr**2+Vi**2)**2) #this is d^2L/dVrl_dLrl(1_)
         dIrldVi = ((self.Q*(Vr**2-Vi**2) - 2*self.P*Vr*Vi)/(Vr**2+Vi**2)**2) #this is d^2L/dVrl_dLil(2)
         ##breaking up the very long equations
@@ -118,7 +118,7 @@ class Loads:
 
         LAG_RL_hist = Lrl*(dIrldVr) + Lil*(dIrldVi)
 
-        LAG_RL_J_stamp = LAG_RL_hist - Lrl*(dIrldVr+Ifr) - Lil*(dIrldVi+Ifi) - Vi*d2L_dvrldvil - Vr*d2L_d2vrl
+        LAG_RL_J_stamp = LAG_RL_hist - Lrl*(dIrldVr) - Lil*(dIrldVi) - Vi*d2L_dvrldvil - Vr*d2L_d2vrl
 
         idx_Y = stampY(self.lambda_r_node, self.Vr_node, d2L_d2vrl, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.lambda_r_node, self.Vi_node, d2L_dvrldvil, Y_val, Y_row, Y_col, idx_Y)
@@ -145,7 +145,7 @@ class Loads:
 
         LAG_IL_hist = Lrl*(dIildVr) + Lil*(dIildVi)
 
-        LAG_IL_J_stamp = LAG_IL_hist - Lrl*(dIildVr+Ifr) - Lil*(dIildVi+Ifi) - Vr*d2L_dvildvrl - Vi*d2L_d2vil
+        LAG_IL_J_stamp = LAG_IL_hist - Lrl*(dIildVr) - Lil*(dIildVi) - Vr*d2L_dvildvrl - Vi*d2L_d2vil
 
         idx_Y = stampY(self.lambda_i_node, self.Vr_node,d2L_dvildvrl, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.lambda_i_node, self.Vi_node,d2L_d2vil , Y_val, Y_row, Y_col, idx_Y)
@@ -154,7 +154,7 @@ class Loads:
         idx_J = stampJ(self.lambda_i_node, LAG_IL_J_stamp, J_val, J_row, idx_J)
         
 
-        pass
+        return (idx_Y, idx_J)
 
     def calc_residuals(self, resid, V):
         P = self.P

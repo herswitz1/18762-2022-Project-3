@@ -269,13 +269,13 @@ class PowerFlowFeasibility:
         while NR_count < self.max_iters:
 
             # # # Stamp Nonlinear Power Grid Elements into Y matrix # # #
-            (Ynlin, Jnlin) = self.stamp_nonlinear(generator, load, v)
+            (Ynlin, Jnlin) = self.stamp_nonlinear(generator, load, feasibility_sources, v)
 
             # # # Stamp Nonlinear Power Grid dual values into Y matrix # # #
             # TODO: PART 1, STEP 2.3 - Complete the stamp_nonlinear_dual function which creates the dual stamps for
             #  the nonlinear elements. This function should call a stamp_dual function of each nonlinear element and return
             #  an updated Y matrix. You need to decide the input arguments and return values.
-            (Ynlin_D, Jnlin_D) =self.stamp_linear_dual(generator, load, v)
+            (Ynlin_D, Jnlin_D) =self.stamp_nonlinear_dual( generator, load, feasibility_sources, v)
 
             # # # Solve The System # # #
             # TODO: PART 1, STEP 2.4 - Complete the solve function which solves system of equations Yv = J. The

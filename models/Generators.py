@@ -73,8 +73,8 @@ class Generators:
         # run check to make sure the bus actually has a Q node
         self.Q_node = bus[Buses.bus_key_[self.Bus]].node_Q
         # check something about gen_type?? 
-        self.Ifr_node = bus[Buses.bus_key_[self.Bus]].node_Ifr
-        self.Ifi_node = bus[Buses.bus_key_[self.Bus]].node_Ifi
+        #self.Ifr_node = bus[Buses.bus_key_[self.Bus]].node_Ifr
+        #self.Ifi_node = bus[Buses.bus_key_[self.Bus]].node_Ifi
         #self.Ifq_node = bus[Buses.bus_key_[self.Bus]].node_Ifq
 
         ##ASSIGNING THE LAMBDA
@@ -89,11 +89,11 @@ class Generators:
         Vi = V[self.Vi_node]
         Q = V[self.Q_node]
         ###REALLY NOT SURE HOW TO HANDLE THESE INFEASIABLITY
-        Ifr = 1# V[self.Ifr_node]
-        Ifi = 1#V[self.Ifi_node]
+        #Ifr = 1# V[self.Ifr_node]
+        #Ifi = 1#V[self.Ifi_node]
         #Ifq = V[self.Ifq_node]
 
-        Irg_hist = (P*Vr+Q*Vi)/(Vr**2+Vi**2) ##(1)   + Ifr #()
+        Irg_hist = (P*Vr+Q*Vi)/(Vr**2+Vi**2)    
         dIrgdVr = (P*(Vi**2-Vr**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2
         dIrgdVi = (Q*(Vr**2-Vi**2) - 2*P*Vr*Vi)/(Vr**2+Vi**2)**2
         dIrgdQ = (Vi)/(Vr**2+Vi**2)
@@ -104,7 +104,7 @@ class Generators:
         idx_Y = stampY(self.Vr_node, self.Q_node, dIrgdQ, Y_val, Y_row, Y_col, idx_Y)
         idx_J = stampJ(self.Vr_node, Vr_J_stamp, J_val, J_row, idx_J)
 
-        Iig_hist = (P*Vi-Q*Vr)/(Vr**2+Vi**2)#(2)
+        Iig_hist = (P*Vi-Q*Vr)/(Vr**2+Vi**2)
         dIigdVi = -dIrgdVr
         dIigdVr = dIrgdVi
         dIigdQ = -(Vr)/(Vr**2+Vi**2)
@@ -115,7 +115,7 @@ class Generators:
         idx_Y = stampY(self.Vi_node, self.Q_node, dIigdQ, Y_val, Y_row, Y_col, idx_Y)
         idx_J = stampJ(self.Vi_node, Vi_J_stamp, J_val, J_row, idx_J)
 
-        Vset_hist = self.Vset**2 - Vr**2 - Vi**2#(3)
+        Vset_hist = self.Vset**2 - Vr**2 - Vi**2
         dVset_dVr = -2*Vr
         dVset_dVi = -2*Vi
         Vset_J_stamp = -Vset_hist + dVset_dVr*Vr + dVset_dVi*Vi
@@ -136,20 +136,17 @@ class Generators:
         Lrg = V[self.lambda_r_node]
         Lig = V[self.lambda_i_node]
         Lqg = V[self.lambda_q_node]
-        ###REALLY NOT SURE HOW TO HANDLE THESE INFEASIABLITY
-        Ifr = V[self.Ifr_node]
-        Ifi = V[self.Ifi_node]
-        #Ifq = V[self.Ifq_node]
+        
 
-        ###D LAMBDAS
+        ### First take transpose of regular power flow
 
         ###VRG
         ####dL/dlambda_r_node ######
         #Irg_hist = (P*Vr+Q*Vi)/(Vr**2+Vi**2)#same power flow stamps
-        dIrgdVr = (P*(Vi**2-Vr**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLrg possibly needs a 
-        dIrgdVi = (Q*(Vr**2-Vi**2) - 2*P*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLig
-        dIrgdQ = (Vi)/(Vr**2+Vi**2)#d2L/dVrg_dLqg 
-        IGD_hist = Lrg*dIrgdVr + Lig*dIrgdVi + Lqg*dIrgdQ #(4)
+        dIrgdVr = (P*(Vi**2-Vr**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLrg 
+        dIrgdVi = (Q*(Vr**2-Vi**2) - 2*P*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLig 
+        dIrgdQ = (Vi)/(Vr**2+Vi**2)#d2L/dVrg_dLqg #(3)
+        IGD_hist = Lrg*dIrgdVr + Lig*dIrgdVi + Lqg*dIrgdQ 
         # Vr_J_stamp = -IGD_hist + dIrgdVr*Vr + dIrgdVi*Vi + dIrgdQ*Q
 
         ##d2L/d2Vrg:
@@ -158,7 +155,7 @@ class Generators:
         LBR_vr3 = (Lrg*(2*Q*Vi+2*Vr*P))/(Vr**2+Vi**2)**2
         LBR_vr4 = ((4*Vr*Lrg)*(P*(Vr**2-Vi**2)+2*Vr*Vi*Q))/(Vr**2+Vi**2)**3
         LBR_vr5 = 2*Lqg
-        d2L_d2vrl = LBR_vr1 - LBR_vr2 + LBR_vr3 - LBR_vr4 + LBR_vr5 #(4)
+        d2L_d2vrl = LBR_vr1 - LBR_vr2 + LBR_vr3 - LBR_vr4 + LBR_vr5 
 
         ##d2L/dvrg_dvig
         LBR_vi1 = (Lig*(2*Q*Vi-2*Vr*P))/(Vr**2+Vi**2)**2
@@ -173,7 +170,7 @@ class Generators:
         d2L_dvrldq = LBR_q1 + LBR_q2
         #LAG_RL_hist = Lrg*(dIrgdVr) + Lig*(dIrgdVi) +Lqg*(2*Vr)
 
-        #FEEL LIKE MAYBE I NEED TO ADD IFR,IFI AND IFQ TO CORRESPONDING TERMS bot here and for the stamps
+        
         LAG_RG_J_stamp = -IGD_hist + Lrg*dIrgdVr + Lig*dIrgdVi + Vi*d2L_dvrldvil + Vr*d2L_d2vrl +Lqg*d2L_dvrldq
 
         idx_Y = stampY(self.lambda_r_node, self.Vr_node, d2L_d2vrl, Y_val, Y_row, Y_col, idx_Y)
@@ -190,7 +187,7 @@ class Generators:
         dIigdVi = -dIrgdVr
         dIigdVr = dIrgdVi
         dIigdQ = -(Vr)/(Vr**2+Vi**2)
-        IGDI_hist = Lrg*dIigdVi + Lig*dIigdVi + Lqg*dIigdQ#(5)
+        IGDI_hist = Lrg*dIigdVi + Lig*dIigdVi + Lqg*dIigdQ
 
         ##d2L/d2Vig:
         LBI_vi1 = (Lig*(2*P*Vi-2*Vr*Q))/(Vr**2+Vi**2)**2
@@ -227,18 +224,18 @@ class Generators:
 
         ###dQ###NO CLUE WAHT TO DO
         ####dL/dlambda_q_node ######
-        LBDQ_hist = Lrg*(-Vi/(Vr**2+Vi**2)**2) + Lig*(Vr/(Vr**2+Vi**2)**2)#(6)
+        LBDQ_hist = Lrg*(-Vi/(Vr**2+Vi**2)**2) + Lig*(Vr/(Vr**2+Vi**2)**2)
         #Vset_J_stamp = -Vset_hist + dVset_dVr*Vr + dVset_dVi*Vi
 
         d2L_dqdvr = -(2*Vr**2*Lig)/(Vr**2+Vi**2)**2 + Lig/(Vr**2+Vi**2) + (2*Lrg*Vi*Vr)/(Vr**2+Vi**2)**2
         d2L_dqdvi = -(2*Vr*Vi*Lig)/(Vr**2+Vi**2)**2 - Lrg/(Vr**2+Vi**2) + (2*Lrg*Vi**2)/(Vr**2+Vi**2)**2
         
         LAG_Qg_history = -LBDQ_hist +Vr*d2L_dqdvr + Vi*d2L_dqdvi
-        idx_Y = stampY(self.lambda_q_node, self.lambda_i_node, dIigdVi, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.lambda_q_node, self.lambda_q_node, dIigdQ, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_q_node, self.lambda_r_node, d2L_dqdvr, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_q_node, self.lambda_i_node, d2L_dqdvi, Y_val, Y_row, Y_col, idx_Y)
         idx_J = stampJ(self.lambda_q_node, LAG_Qg_history, J_val, J_row, idx_J)
-        #########INFISABLITY STAMPS NOT SURE IF I DO THEM HERE OR IN THE CLASS
-        pass
+        
+        return (idx_Y, idx_J)
 
     def calc_residuals(self, resid, V):
         P = -self.P
