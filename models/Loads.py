@@ -66,22 +66,22 @@ class Loads:
         Ifr = V[self.Ifr_node]
         Ifi = V[self.Ifi_node]
 
-        Irg_hist = (self.P*Vr+self.Q*Vi)/(Vr**2+Vi**2)
+        Irg_hist = (self.P*Vr+self.Q*Vi)/(Vr**2+Vi**2) + Ifr
         dIrldVr = ((self.P*(Vi**2-Vr**2) - 2*self.Q*Vr*Vi)/(Vr**2+Vi**2)**2) 
         dIrldVi = ((self.Q*(Vr**2-Vi**2) - 2*self.P*Vr*Vi)/(Vr**2+Vi**2)**2) 
         dIrldIfr = 1
-        Vr_J_stamp = -Irg_hist + (dIrldVr+Ifr)*Vr + (dIrldVi+Ifi)*Vi +Ifr*dIrldIfr
+        Vr_J_stamp = -Irg_hist + (dIrldVr)*Vr + (dIrldVi)*Vi +Ifr*dIrldIfr
         
         idx_Y = stampY(self.Vr_node, self.Vr_node, dIrldVr, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.Vr_node, self.Vi_node, dIrldVi, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.Vr_node, self.Ifr_node, dIrldIfr, Y_val, Y_row, Y_col, idx_Y)
         idx_J = stampJ(self.Vr_node, Vr_J_stamp, J_val, J_row, idx_J)
 
-        Iig_hist = (self.P*Vi-self.Q*Vr)/(Vr**2+Vi**2)
+        Iig_hist = (self.P*Vi-self.Q*Vr)/(Vr**2+Vi**2) +Ifi
         dIildVi = -dIrldVr
         dIildVr = dIrldVi
         dIildIfi = 1
-        Vi_J_stamp = -Iig_hist + (dIildVr+Ifr)*Vr + (dIildVi+Ifi)*Vi +Ifi*dIildIfi
+        Vi_J_stamp = -Iig_hist + (dIildVr)*Vr + (dIildVi)*Vi +Ifi*dIildIfi
 
         idx_Y = stampY(self.Vi_node, self.Vr_node, dIildVr, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.Vi_node, self.Vi_node, dIildVi, Y_val, Y_row, Y_col, idx_Y)
@@ -100,21 +100,21 @@ class Loads:
         Ifr = V[self.Ifr_node]
         Ifi = V[self.Ifi_node]
 
-        Irg_hist = (self.P*Vr+self.Q*Vi)/(Vr**2+Vi**2)
-        dIrldVr = ((self.P*(Vi**2-Vr**2) - 2*self.Q*Vr*Vi)/(Vr**2+Vi**2)**2) #this is d^2L/dVrl_dLrl
-        dIrldVi = ((self.Q*(Vr**2-Vi**2) - 2*self.P*Vr*Vi)/(Vr**2+Vi**2)**2) #this is d^2L/dVrl_dLil
+        Irg_hist = (self.P*Vr+self.Q*Vi)/(Vr**2+Vi**2) + Ifr
+        dIrldVr = ((self.P*(Vi**2-Vr**2) - 2*self.Q*Vr*Vi)/(Vr**2+Vi**2)**2) #this is d^2L/dVrl_dLrl(1_)
+        dIrldVi = ((self.Q*(Vr**2-Vi**2) - 2*self.P*Vr*Vi)/(Vr**2+Vi**2)**2) #this is d^2L/dVrl_dLil(2)
         ##breaking up the very long equations
         LBR_vr1 = (Lil*(2*self.Q*Vr-2*Vi*self.P))/(Vr**2+Vi**2)**2
         LBR_vr2 = ((4*Vr*Lil)*(self.Q*(Vr**2-Vi**2)-2*Vr*Vi*self.P))/(Vr**2+Vi**2)**3
         LBR_vr3 = (Lrl*(-2*self.Q*Vi-2*Vr*self.P))/(Vr**2+Vi**2)**2
         LBR_vr4 = ((4*Vr*Lrl)*(self.P*(Vi**2-Vr**2)-2*Vr*Vi*self.Q))/(Vr**2+Vi**2)**3
-        d2L_d2vrl = LBR_vr1 - LBR_vr2 + LBR_vr3 - LBR_vr4
+        d2L_d2vrl = LBR_vr1 - LBR_vr2 + LBR_vr3 - LBR_vr4 #(3)
 
         LBR_vi1 = (Lil*(2*self.Q*Vi-2*Vr*self.P))/(Vr**2+Vi**2)**2
         LBR_vi2 = ((4*Vi*Lil)*(self.Q*(Vr**2-Vi**2)-2*Vr*Vi*self.P))/(Vr**2+Vi**2)**3
         LBR_vi3 = (Lrl*(2*self.P*Vi-2*Vr*self.Q))/(Vr**2+Vi**2)**2
         LBR_vi4 = ((4*Vi*Lrl)*(self.P*(Vi**2-Vr**2)-2*Vr*Vi*self.Q))/(Vr**2+Vi**2)**3
-        d2L_dvrldvil = LBR_vi1 - LBR_vi2 + LBR_vi3 - LBR_vi4
+        d2L_dvrldvil = LBR_vi1 - LBR_vi2 + LBR_vi3 - LBR_vi4#(4)
 
         LAG_RL_hist = Lrl*(dIrldVr) + Lil*(dIrldVi)
 

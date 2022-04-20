@@ -58,12 +58,12 @@ def solve_feasibility(TESTCASE, SETTINGS):
     for ele in slack:
         ele.assign_nodes(bus)
         # TODO: you need to implement this function!
-        ele.assign_dual_nodes()
+        ele.assign_dual_nodes(bus)
 
     # Assign nodes for the feasibility sources
     for ele in feasibility_sources:
         # You might need some arguments for this function
-        ele.assign_nodes(bus,slack)
+        ele.assign_nodes(bus)
 
     # set system node indexes for all other devices
     # HINT: in addition to telling each device the Vr and Vi node indices

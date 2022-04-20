@@ -42,7 +42,7 @@ class Buses:
         
         self.node_Ifr = None
         self.node_Ifi = None
-        self.node_Ifq = None
+       # self.node_Ifq = None
 
         # initialize dual nodes
         # TODO - you can name them as you please
@@ -76,8 +76,7 @@ class Buses:
         if self.Type == 1 or self.Type == 3:
             self.node_Vr = self._node_index.__next__()
             self.node_Vi = self._node_index.__next__()
-            self.node_Ifr = self._node_index.__next__()
-            self.node_Ifi = self._node_index.__next__()
+            
 
         # If PV Bus
         elif self.Type == 2:
@@ -86,7 +85,7 @@ class Buses:
             self.node_Q = self._node_index.__next__()
             self.node_Ifr = self._node_index.__next__()
             self.node_Ifi = self._node_index.__next__()
-            self.node_Ifq = self._node_index.__next__()
+            #self.node_Ifq = self._node_index.__next__()
 
         
     def assign_dual_nodes(self):
