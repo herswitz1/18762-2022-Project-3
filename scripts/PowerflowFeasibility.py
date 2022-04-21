@@ -262,7 +262,7 @@ class PowerFlowFeasibility:
         err_max = 10  # maximum error at the current NR iteration. Initialize to some large value.
         tol = self.tol  # chosen NR tolerance
         NR_count = 0  # current NR iteration
-        check_for_zero_rows_cols = False # useful for debugging
+        check_for_zero_rows_cols = True # useful for debugging
         converged = False
         # # # Begin Solving Via NR # # #
         # TODO: PART 1, STEP 2.2 - Complete the NR While Loop

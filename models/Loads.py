@@ -100,17 +100,19 @@ class Loads:
         #Ifr = V[self.Ifr_node]
         #Ifi = V[self.Ifi_node]
 
-        Irg_hist = (self.P*Vr+self.Q*Vi)/(Vr**2+Vi**2) #+ Ifr
+        #Irg_hist_1 = (self.P*Vr+self.Q*Vi)/(Vr**2+Vi**2) #+ Ifr
+        #Irg_hist_2 = (self.P*Vi-self.Q*Vr)/(Vr**2+Vi**2)
+
         dIrldVr = ((self.P*(Vi**2-Vr**2) - 2*self.Q*Vr*Vi)/(Vr**2+Vi**2)**2) #this is d^2L/dVrl_dLrl(1_)
         dIrldVi = ((self.Q*(Vr**2-Vi**2) - 2*self.P*Vr*Vi)/(Vr**2+Vi**2)**2) #this is d^2L/dVrl_dLil(2)
         ##breaking up the very long equations
         LBR_vr1 = (Lil*(2*self.Q*Vr-2*Vi*self.P))/(Vr**2+Vi**2)**2
-        LBR_vr2 = ((4*Vr*Lil)*(self.Q*(Vr**2-Vi**2)-2*Vr*Vi*self.P))/(Vr**2+Vi**2)**3
+        LBR_vr2 = ((4*Vr*Lil)*(self.Q*(Vr**2-Vi**2)-2*Vr*Vi*self.P))/(Vr**2+Vi**2)**3##SEEM TO BE PROBLEM HERE
         LBR_vr3 = (Lrl*(-2*self.Q*Vi-2*Vr*self.P))/(Vr**2+Vi**2)**2
-        LBR_vr4 = ((4*Vr*Lrl)*(self.P*(Vi**2-Vr**2)-2*Vr*Vi*self.Q))/(Vr**2+Vi**2)**3
+        LBR_vr4 = ((4*Vr*Lrl)*(self.P*(Vi**2-Vr**2)-2*Vr*Vi*self.Q))/(Vr**2+Vi**2)**3#SEEMS TO BE PROBLEM HERE
         d2L_d2vrl = LBR_vr1 - LBR_vr2 + LBR_vr3 - LBR_vr4 #(3)
 
-        LBR_vi1 = (Lil*(2*self.Q*Vi-2*Vr*self.P))/(Vr**2+Vi**2)**2
+        LBR_vi1 = (Lil*(-2*self.Q*Vi-2*Vr*self.P))/(Vr**2+Vi**2)**2
         LBR_vi2 = ((4*Vi*Lil)*(self.Q*(Vr**2-Vi**2)-2*Vr*Vi*self.P))/(Vr**2+Vi**2)**3
         LBR_vi3 = (Lrl*(2*self.P*Vi-2*Vr*self.Q))/(Vr**2+Vi**2)**2
         LBR_vi4 = ((4*Vi*Lrl)*(self.P*(Vi**2-Vr**2)-2*Vr*Vi*self.Q))/(Vr**2+Vi**2)**3
@@ -118,7 +120,7 @@ class Loads:
 
         LAG_RL_hist = Lrl*(dIrldVr) + Lil*(dIrldVi)
 
-        LAG_RL_J_stamp = LAG_RL_hist - Lrl*(dIrldVr) - Lil*(dIrldVi) - Vi*d2L_dvrldvil - Vr*d2L_d2vrl
+        LAG_RL_J_stamp = (LAG_RL_hist- Vi*d2L_dvrldvil - Vr*d2L_d2vrl - Lrl*(dIrldVr) - Lil*(dIrldVi) )
 
         idx_Y = stampY(self.lambda_r_node, self.Vr_node, d2L_d2vrl, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.lambda_r_node, self.Vi_node, d2L_dvrldvil, Y_val, Y_row, Y_col, idx_Y)
@@ -127,8 +129,9 @@ class Loads:
         idx_J = stampJ(self.lambda_r_node, LAG_RL_J_stamp, J_val, J_row, idx_J)
         #########
         ##NOW STAMPING LAMBDA_IL ROW
-        dIildVi = -dIrldVr#d2L/dvil_dlrl
-        dIildVr = dIrldVi#d2L/dvil_dIil
+        Iig_hist = (self.P*Vi-self.Q*Vr)/(Vr**2+Vi**2)
+        dIildVi = (self.Q*(Vr**2-Vi**2)-2*self.P*Vr*Vi)/(Vr**2+Vi**2)**2#-dIrldVr#d2L/dvil_dlrl#these may need to be chaged
+        dIildVr = (self.P*(Vr**2-Vi**2)-2*self.Q*Vi*Vr)/(Vr**2+Vi**2)**2#dIrldVi#d2L/dvil_dIil
 
         ##breaking up the very long equations
         LBI_vi1 = (Lil*(-2*self.Q*Vr-2*Vi*self.P))/(Vr**2+Vi**2)**2
@@ -143,9 +146,9 @@ class Loads:
         LBI_vr4 = ((4*Vr*Lrl)*(self.Q*(Vr**2-Vi**2)-2*Vr*Vi*self.P))/(Vr**2+Vi**2)**3
         d2L_dvildvrl = LBI_vr1 - LBI_vr2 + LBI_vr3 - LBI_vr4
 
-        LAG_IL_hist = Lrl*(dIildVr) + Lil*(dIildVi)
+        LAG_IL_hist = Lrl*(dIildVi) + Lil*(dIildVr)
 
-        LAG_IL_J_stamp = LAG_IL_hist - Lrl*(dIildVr) - Lil*(dIildVi) - Vr*d2L_dvildvrl - Vi*d2L_d2vil
+        LAG_IL_J_stamp = (LAG_IL_hist  - Vr*d2L_dvildvrl - Vi*d2L_d2vil - Lrl*(dIildVr) - Lil*(dIildVi))
 
         idx_Y = stampY(self.lambda_i_node, self.Vr_node,d2L_dvildvrl, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.lambda_i_node, self.Vi_node,d2L_d2vil , Y_val, Y_row, Y_col, idx_Y)

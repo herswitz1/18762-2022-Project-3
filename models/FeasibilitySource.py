@@ -28,13 +28,14 @@ class FeasibilitySource:
             None
         """
         # TODO: You decide how to implement variables for the feasibility injections
-        #I thiink there should be 9 
+        #I 
         ###SOMETHING FEELS OFF HERE not sure if I am assigning nodes or adding more
         self.Ifr_node = bus[Buses.bus_key_[self.Bus]].node_Vr
         self.Ifi_node = bus[Buses.bus_key_[self.Bus]].node_Vi
         #self.Ifq_PV = bus[Buses.bus_key_[self.Bus]].node_Vi
-        ###START OFF WITH ASSUMING SLACK DOES NOT HAVE INFEASABLITILY
+        ###EACH BUS INCLUDING SLACK GETS AN INFEASABILITY CURRENT
         self.lambda_Ifr_node = Buses._node_index.__next__()
+        print(self.lambda_Ifr_node)
         self.lambda_Ifi_node = Buses._node_index.__next__()
         pass
 

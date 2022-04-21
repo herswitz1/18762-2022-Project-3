@@ -145,7 +145,7 @@ class Generators:
         #Irg_hist = (P*Vr+Q*Vi)/(Vr**2+Vi**2)#same power flow stamps
         dIrgdVr = (P*(Vi**2-Vr**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLrg 
         dIrgdVi = (Q*(Vr**2-Vi**2) - 2*P*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLig 
-        dIrgdQ = (Vi)/(Vr**2+Vi**2)#d2L/dVrg_dLqg #(3)
+        dIrgdQ = 2*Vr#(Vi)/(Vr**2+Vi**2)#d2L/dVrg_dLqg #(3)
         IGD_hist = Lrg*dIrgdVr + Lig*dIrgdVi + Lqg*dIrgdQ 
         # Vr_J_stamp = -IGD_hist + dIrgdVr*Vr + dIrgdVi*Vi + dIrgdQ*Q
 
@@ -171,7 +171,7 @@ class Generators:
         #LAG_RL_hist = Lrg*(dIrgdVr) + Lig*(dIrgdVi) +Lqg*(2*Vr)
 
         
-        LAG_RG_J_stamp = -IGD_hist + Lrg*dIrgdVr + Lig*dIrgdVi + Vi*d2L_dvrldvil + Vr*d2L_d2vrl +Lqg*d2L_dvrldq
+        LAG_RG_J_stamp = IGD_hist - Vi*d2L_dvrldvil - Vr*d2L_d2vrl -Lqg*d2L_dvrldq - Lrg*dIrgdVr - Lig*dIrgdVi
 
         idx_Y = stampY(self.lambda_r_node, self.Vr_node, d2L_d2vrl, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.lambda_r_node, self.Vi_node, d2L_dvrldvil, Y_val, Y_row, Y_col, idx_Y)
@@ -184,9 +184,10 @@ class Generators:
 
         ###VIG############
         ####dL/dlambda_i_node ######
-        dIigdVi = -dIrgdVr
-        dIigdVr = dIrgdVi
-        dIigdQ = -(Vr)/(Vr**2+Vi**2)
+        Iig_hist = (P*Vi-Q*Vr)/(Vr**2+Vi**2)
+        dIigdVi = (Q*(Vi**2-Vr**2) + 2*P*Vr*Vi)/(Vr**2+Vi**2)**2
+        dIigdVr = (P*(Vi**2-Vr**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2
+        dIigdQ = 2*Vi#-(Vr)/(Vr**2+Vi**2)
         IGDI_hist = Lrg*dIigdVi + Lig*dIigdVi + Lqg*dIigdQ
 
         ##d2L/d2Vig:
@@ -198,20 +199,20 @@ class Generators:
         d2L_d2vil = LBI_vi1 - LBI_vi2 + LBI_vi3 - LBI_vi4 + LBI_vi5
 
         ##d2L/dvig_dvrg
-        LBI_vr1 = (Lig*(2*P*Vi-2*Vr*Q))/(Vr**2+Vi**2)**2
-        LBI_vr2 = ((4*Vi*Lig)*(P*(Vi**2-Vr**2)-2*Vr*Vi*Q))/(Vr**2+Vi**2)**3
-        LBI_vr3 = (Lrg*(2*Q*Vi-2*Vr*P))/(Vr**2+Vi**2)**2
-        LBI_vr4 = ((4*Vi*Lrg)*(P*(Vi**2-Vr**2)+2*Vr*Vi*P))/(Vr**2+Vi**2)**3
+        LBI_vr1 = (Lig*(-2*Q*Vi-2*Vr*P))/(Vr**2+Vi**2)**2
+        LBI_vr2 = ((4*Vr*Lig)*(P*(Vi**2-Vr**2)-2*Vr*Vi*Q))/(Vr**2+Vi**2)**3
+        LBI_vr3 = (Lrg*(2*P*Vi-2*Vr*Q))/(Vr**2+Vi**2)**2
+        LBI_vr4 = ((4*Vr*Lrg)*(Q*(Vi**2-Vr**2)+2*Vr*Vi*P))/(Vr**2+Vi**2)**3
         d2L_dvildvrl = LBI_vr1 - LBI_vr2 + LBI_vr3 - LBI_vr4
 
         ##d2L/dvig_dqg
         LBI_q1 = (Lrg*(Vi**2-Vr**2))/(Vr**2+Vi**2)**2
         LBI_q2 = (2*Lig*Vr*Vi)/(Vr**2+Vi**2)**2
-        d2L_dvildq = LBI_q1 + LBI_q2
+        d2L_dvildq = LBI_q1 - LBI_q2
         #LAG_IL_hist = Lrl*(dIigdVr) + Lil*(dIigdVi) +Lql*(2*Vi)
 
         #FEEL LIKE MAYBE I NEED TO ADD IFR,IFI AND IFQ TO CORRESPONDING TERMS bot here and for the stamps
-        LAG_RG_J_stamp = -IGDI_hist + Lrg*dIigdVr + Lig*dIigdVi + Vr*d2L_dvildvrl + Vi*d2L_d2vil +Lqg*d2L_dvildq
+        LAG_RG_J_stamp = IGDI_hist - Lrg*dIigdVr - Lig*dIigdVi - Vr*d2L_dvildvrl - Vi*d2L_d2vil -Lqg*d2L_dvildq
 
         idx_Y = stampY(self.lambda_i_node, self.Vr_node, d2L_dvildvrl, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.lambda_i_node, self.Vi_node, d2L_d2vil, Y_val, Y_row, Y_col, idx_Y)
@@ -224,13 +225,14 @@ class Generators:
 
         ###dQ###NO CLUE WAHT TO DO
         ####dL/dlambda_q_node ######
+        Vset_hist = self.Vset**2 - Vr**2 - Vi**2
         LBDQ_hist = Lrg*(-Vi/(Vr**2+Vi**2)**2) + Lig*(Vr/(Vr**2+Vi**2)**2)
         #Vset_J_stamp = -Vset_hist + dVset_dVr*Vr + dVset_dVi*Vi
 
         d2L_dqdvr = -(2*Vr**2*Lig)/(Vr**2+Vi**2)**2 + Lig/(Vr**2+Vi**2) + (2*Lrg*Vi*Vr)/(Vr**2+Vi**2)**2
         d2L_dqdvi = -(2*Vr*Vi*Lig)/(Vr**2+Vi**2)**2 - Lrg/(Vr**2+Vi**2) + (2*Lrg*Vi**2)/(Vr**2+Vi**2)**2
         
-        LAG_Qg_history = -LBDQ_hist +Vr*d2L_dqdvr + Vi*d2L_dqdvi
+        LAG_Qg_history = LBDQ_hist -Vr*d2L_dqdvr - Vi*d2L_dqdvi
         idx_Y = stampY(self.lambda_q_node, self.lambda_r_node, d2L_dqdvr, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.lambda_q_node, self.lambda_i_node, d2L_dqdvi, Y_val, Y_row, Y_col, idx_Y)
         idx_J = stampJ(self.lambda_q_node, LAG_Qg_history, J_val, J_row, idx_J)
