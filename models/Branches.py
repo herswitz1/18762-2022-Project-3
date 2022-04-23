@@ -64,6 +64,7 @@ class Branches:
         self.lambda_r_to = bus[Buses.bus_key_[self.to_bus]].lambda_r_node
         self.lambda_i_to = bus[Buses.bus_key_[self.to_bus]].lambda_i_node         
 
+        #NEED TO TRY SWAPPING X AND LAMBDA ROWS FOR PRIMAL AND DUAL STAMPS
     def stamp(self, V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J):
         if not self.status:
             return (idx_Y, idx_J)

@@ -32,6 +32,8 @@ class FeasibilitySource:
         ###SOMETHING FEELS OFF HERE not sure if I am assigning nodes or adding more
         self.Ifr_node = bus[Buses.bus_key_[self.Bus]].node_Vr
         self.Ifi_node = bus[Buses.bus_key_[self.Bus]].node_Vi
+        # self.Ifr_lambda_node = bus[Buses.bus_key_[self.Bus]].lambda_r_node
+        # self.Ifi_lambda_node = bus[Buses.bus_key_[self.Bus]].lambda_i_node
         #self.Ifq_PV = bus[Buses.bus_key_[self.Bus]].node_Vi
         ###EACH BUS INCLUDING SLACK GETS AN INFEASABILITY CURRENT
         self.lambda_Ifr_node = Buses._node_index.__next__()
@@ -42,17 +44,26 @@ class FeasibilitySource:
     def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
         # You need to implement this.
         #needs to add a one stamp for each row with
+        
         idx_Y = stampY(self.Ifr_node, self.lambda_Ifr_node, 1, Y_val, Y_row, Y_col, idx_Y)#power flow
         idx_Y = stampY(self.Ifi_node, self.lambda_Ifi_node, 1, Y_val, Y_row, Y_col, idx_Y)#power flow
-        idx_Y = stampY(self.lambda_Ifr_node, self.Ifr_node, 1, Y_val, Y_row, Y_col, idx_Y)#hessen
-        idx_Y = stampY(self.lambda_Ifi_node, self.Ifi_node, 1, Y_val, Y_row, Y_col, idx_Y)#hessen
+        #Trying different implementation
+        # idx_Y = stampY(self.Ifr_lambda_node, self.lambda_Ifr_node, 1, Y_val, Y_row, Y_col, idx_Y)#power flow
+        # idx_Y = stampY(self.Ifi_lambda_node, self.lambda_Ifi_node, 1, Y_val, Y_row, Y_col, idx_Y)#power flow
         
 
         return (idx_Y, idx_J)
 
     def stamp_dual(self,V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
         # You need to implement this.
+        idx_Y = stampY(self.lambda_Ifr_node, self.Ifr_node, 1, Y_val, Y_row, Y_col, idx_Y)#hessen
+        idx_Y = stampY(self.lambda_Ifi_node, self.Ifi_node, 1, Y_val, Y_row, Y_col, idx_Y)#hessen 
         idx_Y = stampY(self.lambda_Ifr_node, self.lambda_Ifr_node, 2, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.lambda_Ifi_node, self.lambda_Ifi_node, 2, Y_val, Y_row, Y_col, idx_Y)
+        ##Trying different implementation
+        # idx_Y = stampY(self.Ifr_node, self.Ifr_lambda_node, 1, Y_val, Y_row, Y_col, idx_Y)#hessen
+        # idx_Y = stampY(self.Ifi_node, self.Ifi_lambda_node, 1, Y_val, Y_row, Y_col, idx_Y)#hessen 
+        # idx_Y = stampY(self.Ifr_node, self.lambda_Ifr_node, 2, Y_val, Y_row, Y_col, idx_Y)
+        # idx_Y = stampY(self.Ifi_node, self.lambda_Ifi_node, 2, Y_val, Y_row, Y_col, idx_Y)
         return (idx_Y, idx_J)
         #pass

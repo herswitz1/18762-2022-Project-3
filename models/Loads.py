@@ -72,21 +72,22 @@ class Loads:
         
         Vr_J_stamp = -Irg_hist + (dIrldVr)*Vr + (dIrldVi)*Vi #+Ifr*dIrldIfr
         
-        idx_Y = stampY(self.Vr_node, self.Vr_node, dIrldVr, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.Vr_node, self.Vi_node, dIrldVi, Y_val, Y_row, Y_col, idx_Y)
+        #Trying changing Vr_node to lambda_r_node
+        idx_Y = stampY(self.lambda_r_node, self.Vr_node, dIrldVr, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_r_node, self.Vi_node, dIrldVi, Y_val, Y_row, Y_col, idx_Y)
         #idx_Y = stampY(self.Vr_node, self.Ifr_node, dIrldIfr, Y_val, Y_row, Y_col, idx_Y)
-        idx_J = stampJ(self.Vr_node, Vr_J_stamp, J_val, J_row, idx_J)
+        idx_J = stampJ(self.lambda_r_node, Vr_J_stamp, J_val, J_row, idx_J)
 
         Iig_hist = (self.P*Vi-self.Q*Vr)/(Vr**2+Vi**2) #+Ifi
         dIildVi = -dIrldVr
         dIildVr = dIrldVi
         #dIildIfi = 1
         Vi_J_stamp = -Iig_hist + (dIildVr)*Vr + (dIildVi)*Vi #+Ifi*dIildIfi
-
-        idx_Y = stampY(self.Vi_node, self.Vr_node, dIildVr, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.Vi_node, self.Vi_node, dIildVi, Y_val, Y_row, Y_col, idx_Y)
+        #Trying changing Vi_node to lambda_i_node
+        idx_Y = stampY(self.lambda_i_node, self.Vr_node, dIildVr, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_i_node, self.Vi_node, dIildVi, Y_val, Y_row, Y_col, idx_Y)
         #idx_Y = stampY(self.Vi_node, self.Ifi_node, dIildIfi, Y_val, Y_row, Y_col, idx_Y)
-        idx_J = stampJ(self.Vi_node, Vi_J_stamp, J_val, J_row, idx_J)
+        idx_J = stampJ(self.lambda_i_node, Vi_J_stamp, J_val, J_row, idx_J)
 
         return (idx_Y, idx_J)
 
@@ -121,12 +122,12 @@ class Loads:
         LAG_RL_hist = Lrl*(dIrldVr) + Lil*(dIrldVi)
 
         LAG_RL_J_stamp = (LAG_RL_hist- Vi*d2L_dvrldvil - Vr*d2L_d2vrl - Lrl*(dIrldVr) - Lil*(dIrldVi) )
-
-        idx_Y = stampY(self.lambda_r_node, self.Vr_node, d2L_d2vrl, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.lambda_r_node, self.Vi_node, d2L_dvrldvil, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.lambda_r_node, self.lambda_r_node, dIrldVr, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.lambda_r_node, self.lambda_i_node, dIrldVi, Y_val, Y_row, Y_col, idx_Y)
-        idx_J = stampJ(self.lambda_r_node, LAG_RL_J_stamp, J_val, J_row, idx_J)
+        #Trying changing lambda_r_node to Vr_node
+        idx_Y = stampY(self.Vr_node, self.Vr_node, d2L_d2vrl, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.Vr_node, self.Vi_node, d2L_dvrldvil, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.Vr_node, self.lambda_r_node, dIrldVr, Y_val, Y_row, Y_col, idx_Y)#POWER FLOW TRANSPOSE
+        idx_Y = stampY(self.Vr_node, self.lambda_i_node, dIrldVi, Y_val, Y_row, Y_col, idx_Y)#POWER FLOW TRANSPOSE
+        idx_J = stampJ(self.Vr_node, LAG_RL_J_stamp, J_val, J_row, idx_J)
         #########
         ##NOW STAMPING LAMBDA_IL ROW
         Iig_hist = (self.P*Vi-self.Q*Vr)/(Vr**2+Vi**2)
@@ -149,12 +150,12 @@ class Loads:
         LAG_IL_hist = Lrl*(dIildVi) + Lil*(dIildVr)
 
         LAG_IL_J_stamp = (LAG_IL_hist  - Vr*d2L_dvildvrl - Vi*d2L_d2vil - Lrl*(dIildVr) - Lil*(dIildVi))
-
-        idx_Y = stampY(self.lambda_i_node, self.Vr_node,d2L_dvildvrl, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.lambda_i_node, self.Vi_node,d2L_d2vil , Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.lambda_i_node, self.lambda_r_node, dIildVi, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.lambda_i_node, self.lambda_i_node, dIildVr, Y_val, Y_row, Y_col, idx_Y)
-        idx_J = stampJ(self.lambda_i_node, LAG_IL_J_stamp, J_val, J_row, idx_J)
+        #Trying changing lambda_i_node to Vi_node
+        idx_Y = stampY(self.Vi_node, self.Vr_node,d2L_dvildvrl, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.Vi_node, self.Vi_node,d2L_d2vil , Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.Vi_node, self.lambda_r_node, dIildVi, Y_val, Y_row, Y_col, idx_Y)#power flow transpose
+        idx_Y = stampY(self.Vi_node, self.lambda_i_node, dIildVr, Y_val, Y_row, Y_col, idx_Y)#power flow transpose
+        idx_J = stampJ(self.Vi_node, LAG_IL_J_stamp, J_val, J_row, idx_J)
         
 
         return (idx_Y, idx_J)
