@@ -7,7 +7,7 @@ casename = 'testcases/GS-4_stressed.RAW'
 # the settings for the solver
 settings = {
     "Tolerance": 1E-07,
-    "Max Iters": 10,
+    "Max Iters": 20,
     "Limiting":  False,
 }
 
