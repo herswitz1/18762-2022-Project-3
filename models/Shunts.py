@@ -64,47 +64,45 @@ class Shunts:
         self.lambda_i_node = bus[Buses.bus_key_[self.Bus]].lambda_i_node
 
     def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
-        idx_Y = stampY(self.Vr_node, self.Vr_node,
-                                    self.G_pu, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.Vi_node, self.Vi_node,
-                                    self.G_pu, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.Vr_node, self.Vi_node,
-                                    -self.B_pu, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.Vi_node, self.Vr_node,
-                                    self.B_pu, Y_val, Y_row, Y_col, idx_Y)
+        # idx_Y = stampY(self.Vr_node, self.Vr_node,
+        #                             self.G_pu, Y_val, Y_row, Y_col, idx_Y)
+        # idx_Y = stampY(self.Vi_node, self.Vi_node,
+        #                             self.G_pu, Y_val, Y_row, Y_col, idx_Y)
+        # idx_Y = stampY(self.Vr_node, self.Vi_node,
+        #                             -self.B_pu, Y_val, Y_row, Y_col, idx_Y)
+        # idx_Y = stampY(self.Vi_node, self.Vr_node,
+        #                             self.B_pu, Y_val, Y_row, Y_col, idx_Y)
        
        ###############
-        # idx_Y = stampY(self.lambda_r_node, self.Vr_node,
-        #                             self.G_pu, Y_val, Y_row, Y_col, idx_Y)
-        # idx_Y = stampY(self.lambda_i_node, self.Vi_node,
-        #                             self.G_pu, Y_val, Y_row, Y_col, idx_Y)
-        # idx_Y = stampY(self.lambda_r_node, self.Vi_node,
-        #                             -self.B_pu, Y_val, Y_row, Y_col, idx_Y)
-        # idx_Y = stampY(self.lambda_i_node, self.Vr_node,
-        #                             self.B_pu, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_r_node, self.Vr_node,
+                                    self.G_pu, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_i_node, self.Vi_node,
+                                    self.G_pu, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_r_node, self.Vi_node,
+                                    -self.B_pu, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_i_node, self.Vr_node,
+                                    self.B_pu, Y_val, Y_row, Y_col, idx_Y)
         return (idx_Y, idx_J)
 
     def stamp_dual(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
         # You need to implement this.(LINEAR SYSTEM SO JUST TAKE THE TRANSPOSE)
-        idx_Y = stampY(self.lambda_r_node, self.lambda_r_node,
-                                    self.G_pu, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.lambda_i_node, self.lambda_i_node,
-                                    self.G_pu, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.lambda_r_node, self.lambda_i_node,
-                                    self.B_pu, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.lambda_i_node, self.lambda_r_node,
-                                    -self.B_pu, Y_val, Y_row, Y_col, idx_Y)
-
-
-
-        # idx_Y = stampY(self.Vr_node, self.lambda_r_node,
+        # idx_Y = stampY(self.lambda_r_node, self.lambda_r_node,
         #                             self.G_pu, Y_val, Y_row, Y_col, idx_Y)
-        # idx_Y = stampY(self.Vi_node, self.lambda_i_node,
+        # idx_Y = stampY(self.lambda_i_node, self.lambda_i_node,
         #                             self.G_pu, Y_val, Y_row, Y_col, idx_Y)
-        # idx_Y = stampY(self.Vr_node, self.lambda_i_node,
+        # idx_Y = stampY(self.lambda_r_node, self.lambda_i_node,
         #                             self.B_pu, Y_val, Y_row, Y_col, idx_Y)
-        # idx_Y = stampY(self.Vi_node, self.lambda_r_node,
+        # idx_Y = stampY(self.lambda_i_node, self.lambda_r_node,
         #                             -self.B_pu, Y_val, Y_row, Y_col, idx_Y)
+
+        idx_Y = stampY(self.Vr_node, self.lambda_r_node,
+                                    self.G_pu, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.Vi_node, self.lambda_i_node,
+                                    self.G_pu, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.Vr_node, self.lambda_i_node,
+                                    self.B_pu, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.Vi_node, self.lambda_r_node,
+                                    -self.B_pu, Y_val, Y_row, Y_col, idx_Y)
         
         
         return (idx_Y, idx_J)

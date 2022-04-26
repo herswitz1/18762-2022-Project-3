@@ -30,10 +30,10 @@ class FeasibilitySource:
         # TODO: You decide how to implement variables for the feasibility injections
         #I 
         ###SOMETHING FEELS OFF HERE not sure if I am assigning nodes or adding more
-        self.Ifr_node = bus[Buses.bus_key_[self.Bus]].node_Vr
-        self.Ifi_node = bus[Buses.bus_key_[self.Bus]].node_Vi
-        # self.Ifr_lambda_node = bus[Buses.bus_key_[self.Bus]].lambda_r_node
-        # self.Ifi_lambda_node = bus[Buses.bus_key_[self.Bus]].lambda_i_node
+        # self.Ifr_node = bus[Buses.bus_key_[self.Bus]].node_Vr
+        # self.Ifi_node = bus[Buses.bus_key_[self.Bus]].node_Vi
+        self.Ifr_node = bus[Buses.bus_key_[self.Bus]].lambda_r_node#since power flow equations are with respect to lambda row
+        self.Ifi_node = bus[Buses.bus_key_[self.Bus]].lambda_i_node
         #self.Ifq_PV = bus[Buses.bus_key_[self.Bus]].node_Vi
         ###EACH BUS INCLUDING SLACK GETS AN INFEASABILITY CURRENT
         self.lambda_Ifr_node = Buses._node_index.__next__()

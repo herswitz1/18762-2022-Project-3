@@ -10,12 +10,15 @@ def initialize(size_Y, bus, generator, slack, flat_start=False):
             # HINT: A very small, positive number usually works well
             V_init[ele.lambda_r_node] = .000001
             V_init[ele.lambda_i_node] = .000001
+            V_init[ele.node_Ifr] = 1
+            V_init[ele.node_Ifi]= 1
         for ele in generator:
-            V_init[ele.Q_node] += (ele.Qmax+ele.Qmin)/2
+            V_init[ele.Q_node] += 1#(ele.Qmax+ele.Qmin)/2
             # TODO: initialize the lambda associated with the Vset equation
             V_init[ele.lambda_q_node] += .00001
         for ele in slack:
             # TODO: Initialize all the slack current injections
+            #V_init[ele.]
             pass
     else:
         for ele in bus:
@@ -25,6 +28,8 @@ def initialize(size_Y, bus, generator, slack, flat_start=False):
             # HINT: A very small, positive number usually works well
             V_init[ele.lambda_r_node] = .000001
             V_init[ele.lambda_i_node] = .000001
+            # V_init[ele.node_Ifr] = .000001
+            # V_init[ele.node_Ifi]= .000001
         for ele in generator:
             V_init[ele.Q_node] += -ele.Qinit
             # TODO: initialize the lambda associated with the Vset equation
