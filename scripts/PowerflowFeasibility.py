@@ -41,7 +41,7 @@ class PowerFlowFeasibility:
         v_sol[v_inds] = np.maximum(v_sol[v_inds], vmin)
 
     def check_error(self, v, v_sol):
-        return np.abs(np.amax(np.abs(v)) - np.amax(np.abs(v_sol)))
+        return np.abs(np.amax(np.abs(v) -np.abs(v_sol)))#np.abs(np.amax(np.abs(v)) - np.amax(np.abs(v_sol)))
 
     def stamp_linear(self, branch, transformer, shunt, slack,feasibility_sources, v_init):
         size_Y = v_init.shape[0]
@@ -237,9 +237,9 @@ class PowerFlowFeasibility:
                 for ele in transformer:
                     v_inds.append(ele.Vaux_r_node)
                     v_inds.append(ele.Vaux_i_node)
-            vmax = 3.5
-            vmin = -3.5
-            max_vstep = 1
+            vmax = 1.5
+            vmin = -1.5
+            max_vstep = .15
         else:
             v_inds = None
             vmax =  np.inf

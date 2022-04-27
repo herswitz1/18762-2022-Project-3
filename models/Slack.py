@@ -65,8 +65,8 @@ class Slack:
         self.lambda_slack_r_node = bus[Buses.bus_key_[self.Bus]].lambda_r_node
         print(self.lambda_slack_r_node)
         self.lambda_slack_i_node = bus[Buses.bus_key_[self.Bus]].lambda_i_node
-        # self.lambda_slack_Ir_node = Buses._node_index.__next__()
-        # self.lambda_slack_Ii_node = Buses._node_index.__next__()
+        self.lambda_slack_Ir_node = Buses._node_index.__next__()
+        self.lambda_slack_Ii_node = Buses._node_index.__next__()
         pass
 
     def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
@@ -90,16 +90,19 @@ class Slack:
         idx_Y = stampY(self.lambda_slack_i_node, self.Slack_Ii_node, 1, Y_val, Y_row, Y_col, idx_Y)
 
         # enforce slack constraints (changed lambda_slack_r_node to Vr_node)
-        idx_Y = stampY(self.Slack_Ir_node, self.Vr_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        #idx_Y = stampY(self.Slack_Ir_node, self.slack_Ifr_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        idx_J = stampJ(self.Slack_Ir_node, self.Vr_set, J_val, J_row, idx_J)#***
-        #idx_J = stampJ(self.lambda_slack_r_node, self.Vr_set, J_val, J_row, idx_J)
+        #idx_Y = stampY(self.Slack_Ir_node, self.Vr_node, 1, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_slack_Ir_node, self.Vr_node, 1, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.lambda_slack_Ii_node, self.Vi_node, 1, Y_val, Y_row, Y_col, idx_Y)
+        
+        #idx_J = stampJ(self.Slack_Ir_node, self.Vr_set, J_val, J_row, idx_J)#***
+        idx_J = stampJ(self.lambda_slack_Ir_node, self.Vr_set, J_val, J_row, idx_J)
+        idx_J = stampJ(self.lambda_slack_Ii_node, self.Vi_set, J_val, J_row, idx_J)
 
         #changed lambda_slack_i_node ot Vi_node
         #idx_Y = stampY(self.Slack_Ii_node, self.Vi_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.Slack_Ii_node, self.Vi_node, 1, Y_val, Y_row, Y_col, idx_Y)
+        ##idx_Y = stampY(self.Slack_Ii_node, self.Vi_node, 1, Y_val, Y_row, Y_col, idx_Y)
         #idx_J = stampJ(self.Slack_Ii_node, self.Vi_set, J_val, J_row, idx_J)#***
-        idx_J = stampJ(self.Slack_Ii_node, self.Vi_set, J_val, J_row, idx_J)
+        #idx_J = stampJ(self.Slack_Ii_node, self.Vi_set, J_val, J_row, idx_J)
 
         return (idx_Y, idx_J)
 
@@ -123,13 +126,16 @@ class Slack:
         # idx_J = stampJ(self.lambda_slack_i_node, self.Vi_set, J_val, J_row, idx_J)
 
         #############################################
-        idx_Y = stampY(self.Vr_node, self.Slack_Ir_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        idx_Y = stampY(self.Vi_node, self.Slack_Ii_node, 1, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.Vr_node, self.lambda_slack_Ir_node, 1, Y_val, Y_row, Y_col, idx_Y)
+        idx_Y = stampY(self.Vi_node, self.lambda_slack_Ii_node, 1, Y_val, Y_row, Y_col, idx_Y)
 
         # # enforce slack constraints (changed lambda_slack_r_node to Vr_node)
         # idx_Y = stampY(self.Slack_Ir_node, self.Vr_node, 1, Y_val, Y_row, Y_col, idx_Y)
         # #idx_Y = stampY(self.Slack_Ir_node, self.slack_Ifr_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        #idx_J = stampJ(self.Vr_node, self.Vr_set, J_val, J_row, idx_J)#***
+        
+        # idx_J = stampJ(self.Vr_node, self.Vr_set, J_val, J_row, idx_J)#***
+        # idx_J = stampJ(self.Vi_node, self.Vi_set, J_val, J_row, idx_J)#***
+        
         # #idx_J = stampJ(self.lambda_slack_r_node, self.Vr_set, J_val, J_row, idx_J)
 
         # #changed lambda_slack_i_node ot Vi_node
