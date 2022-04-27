@@ -126,8 +126,8 @@ class PowerFlowFeasibility:
         for ele in load:
             (idx_Y, idx_J) = ele.stamp(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
         ##NOT SURE ABOUT THE FEASIBILITY SOURCE
-        for ele in feasibility_sources:
-            (idx_Y, idx_J) = ele.stamp(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
+        # for ele in feasibility_sources:
+        #     (idx_Y, idx_J) = ele.stamp(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
 
         nnz_indices = np.nonzero(Ynlin_val)[0]
         Ynlin = csc_matrix((Ynlin_val[nnz_indices], (Ynlin_row[nnz_indices], Ynlin_col[nnz_indices])), shape=(size_Y, size_Y), dtype=np.float64)
@@ -156,8 +156,8 @@ class PowerFlowFeasibility:
         for ele in load:
             (idx_Y, idx_J) = ele.stamp_dual(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
         ##NOT SURE ABOUT THE FEASIBILITY SOURCE
-        for ele in feasibility_sources:
-            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
+        # for ele in feasibility_sources:
+        #     (idx_Y, idx_J) = ele.stamp_dual(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
 
         nnz_indices = np.nonzero(Ynlin_val)[0]
         Ynlin_D = csc_matrix((Ynlin_val[nnz_indices], (Ynlin_row[nnz_indices], Ynlin_col[nnz_indices])), shape=(size_Y, size_Y), dtype=np.float64)
@@ -283,6 +283,8 @@ class PowerFlowFeasibility:
             #  You need to decide the input arguments and return values.
             Y = Ynlin + Ylin + Ylin_D + Ynlin_D
             J = Jnlin + Jlin + Jlin_D + Jnlin_D
+            Ydense = Y.todense() 
+            print(Ydense)
             if check_for_zero_rows_cols:
                 zero_rows = []
                 zero_cols = []

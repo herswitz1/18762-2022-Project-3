@@ -88,13 +88,14 @@ class Slack:
         ################################################
         idx_Y = stampY(self.lambda_slack_r_node, self.Slack_Ir_node, 1, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.lambda_slack_i_node, self.Slack_Ii_node, 1, Y_val, Y_row, Y_col, idx_Y)
-
-        # enforce slack constraints (changed lambda_slack_r_node to Vr_node)
-        #idx_Y = stampY(self.Slack_Ir_node, self.Vr_node, 1, Y_val, Y_row, Y_col, idx_Y)
+        ################################################
+        
+        #########################################################
         idx_Y = stampY(self.lambda_slack_Ir_node, self.Vr_node, 1, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.lambda_slack_Ii_node, self.Vi_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        
-        #idx_J = stampJ(self.Slack_Ir_node, self.Vr_set, J_val, J_row, idx_J)#***
+        ##############################################################
+
+        #idx_J = stampJ(self.Slack_Ir_node, self.Vr_set, J_val, J_row, idx_J)#***(this is the part that is not making sense this should be vr and v i node)
         idx_J = stampJ(self.lambda_slack_Ir_node, self.Vr_set, J_val, J_row, idx_J)
         idx_J = stampJ(self.lambda_slack_Ii_node, self.Vi_set, J_val, J_row, idx_J)
 

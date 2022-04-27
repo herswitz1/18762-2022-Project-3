@@ -31,7 +31,7 @@ def initialize(size_Y, bus, generator, slack, flat_start=False):
             V_init[ele.node_Ifr] = 1
             V_init[ele.node_Ifi]= 1
         for ele in generator:
-            V_init[ele.Q_node] += -ele.Qinit#If i make this one it converges in 2 iteratarions with
+            V_init[ele.Q_node] += 1#-ele.Qinit#If i make this one it converges in 2 iteratarions with
             # TODO: initialize the lambda associated with the Vset equation
             V_init[ele.lambda_q_node] += .00001
         for ele in slack:

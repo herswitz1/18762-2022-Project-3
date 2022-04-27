@@ -76,7 +76,7 @@ class Buses:
         if self.Type == 1 or self.Type == 3:
             self.node_Vr = self._node_index.__next__()
             self.node_Vi = self._node_index.__next__()
-            
+            print('Bus='+str(self.Bus) +' ' + str(self.node_Vr) + '_real voltage slack/PQ index ' +  str(self.node_Vi) + '_imganary voltage slack/PQ index')
 
         # If PV Bus
         elif self.Type == 2:
@@ -86,6 +86,7 @@ class Buses:
             # self.node_Ifr = self._node_index.__next__()
             # self.node_Ifi = self._node_index.__next__()
             #self.node_Ifq = self._node_index.__next__()
+            print('Bus='+str(self.Bus) +' ' +str(self.node_Vr) + '_real voltage PV ' +  str(self.node_Vi) + '_imganary voltage PV ' + str(self.node_Q) + '_q')
 
         
     def assign_dual_nodes(self):
@@ -103,7 +104,7 @@ class Buses:
             self.lambda_i_node = self._node_index.__next__()
             # self.lambda_Ifr = self._node_index.__next__()
             # self.lambda_Ifi = self._node_index.__next__()
-
+            print('Bus='+str(self.Bus) +' ' + str(self.lambda_r_node) + 'dual real lambda slack/PQ index ' +  str(self.lambda_i_node) + 'dual imganary lambda slack/PQ index')
         # If PV Bus
         elif self.Type == 2:
             self.lambda_r_node = self._node_index.__next__()
@@ -112,6 +113,7 @@ class Buses:
             # self.lambda_Ifr = self._node_index.__next__()
             # self.lambda_Ifi = self._node_index.__next__()
             # self.lambda_Ifq = self._node_index.__next__()
+            print('Bus='+str(self.Bus) +' ' +str(self.lambda_r_node) + 'dual real lambda PV ' +  str(self.lambda_i_node) + 'dual imganary lambda PV ' + str(self.lambda_q_node) + 'dual lambda_q')
 
         pass
 

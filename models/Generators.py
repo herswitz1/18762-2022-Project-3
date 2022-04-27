@@ -149,9 +149,9 @@ class Generators:
         f=Lig
         g = Lqg
         ###############################################
-        #VR row
-        dIrgdVr = (P*(Vi**2-Vr**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLrg 
-        dIrgdVi = (Q*(Vr**2-Vi**2) - 2*P*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLig 
+        #VR row(changed minus to pluses for 153 and 154)
+        dIrgdVr = (P*(Vr**2-Vi**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLrg 
+        dIrgdVi = (Q*(Vi**2-Vr**2) - 2*P*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLig 
         dIrgdQ = 2*Vr#(Vi)/(Vr**2+Vi**2)#d2L/dVrg_dLqg #(3)
         IGD_hist = Lrg*dIrgdVr + Lig*dIrgdVi + Lqg*dIrgdQ 
 
