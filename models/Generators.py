@@ -94,8 +94,8 @@ class Generators:
         #Ifq = V[self.Ifq_node]
 
         Irg_hist = (-P*Vr-Q*Vi)/(Vr**2+Vi**2)    
-        dL2_dlambda_r_dVr = (P*(Vr**2-Vi**2) + 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2
-        dL2_dlambda_r_dVi = (Q*(Vi**2-Vr**2) + 2*P*Vr*Vi)/(Vr**2+Vi**2)**2
+        dL2_dlambda_r_dVr = (P*(Vr**2-Vi**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2
+        dL2_dlambda_r_dVi = (Q*(Vi**2-Vr**2) - 2*P*Vr*Vi)/(Vr**2+Vi**2)**2
         dL2_dlambda_r_dQ = (-Vi)/(Vr**2+Vi**2)
         Vr_J_stamp = -Irg_hist+ dL2_dlambda_r_dVr*Vr + dL2_dlambda_r_dVi*Vi + dL2_dlambda_r_dQ*Q
 
