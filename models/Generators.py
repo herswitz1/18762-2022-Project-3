@@ -93,10 +93,10 @@ class Generators:
         #Ifi = 1#V[self.Ifi_node]
         #Ifq = V[self.Ifq_node]
 
-        Irg_hist = (-P*Vr-Q*Vi)/(Vr**2+Vi**2)    
-        dL2_dlambda_r_dVr = (P*(Vr**2-Vi**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2
-        dL2_dlambda_r_dVi = (Q*(Vi**2-Vr**2) - 2*P*Vr*Vi)/(Vr**2+Vi**2)**2
-        dL2_dlambda_r_dQ = (-Vi)/(Vr**2+Vi**2)
+        Irg_hist = (P*Vr+Q*Vi)/(Vr**2+Vi**2)    
+        dL2_dlambda_r_dVr = (P*(Vi**2-Vr**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2
+        dL2_dlambda_r_dVi = (Q*(Vr**2-Vi**2) - 2*P*Vr*Vi)/(Vr**2+Vi**2)**2
+        dL2_dlambda_r_dQ = (Vi)/(Vr**2+Vi**2)
         Vr_J_stamp = -Irg_hist+ dL2_dlambda_r_dVr*Vr + dL2_dlambda_r_dVi*Vi + dL2_dlambda_r_dQ*Q
 
         #trying changeing Vr_node to lambda_r_node
@@ -105,10 +105,10 @@ class Generators:
         idx_Y = stampY(self.lambda_r_node, self.Q_node, dL2_dlambda_r_dQ, Y_val, Y_row, Y_col, idx_Y)
         idx_J = stampJ(self.lambda_r_node, Vr_J_stamp, J_val, J_row, idx_J)
 
-        Iig_hist = (-P*Vi+Q*Vr)/(Vr**2+Vi**2)
-        dL2_dlambda_i_dVr = (Q*(Vi**2-Vr**2) + 2*P*Vr*Vi)/(Vr**2+Vi**2)**2
-        dL2_dlambda_i_dVi = (P*(Vi**2-Vr**2) + 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2
-        dL2_dlambda_i_dQ = (Vr)/(Vr**2+Vi**2)
+        Iig_hist = (P*Vi-Q*Vr)/(Vr**2+Vi**2)
+        dL2_dlambda_i_dVr = (Q*(Vr**2-Vi**2) - 2*P*Vr*Vi)/(Vr**2+Vi**2)**2
+        dL2_dlambda_i_dVi = (P*(Vr**2-Vi**2) + 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2
+        dL2_dlambda_i_dQ = (-Vr)/(Vr**2+Vi**2)
         Vi_J_stamp = -Iig_hist + dL2_dlambda_i_dVr*Vr + dL2_dlambda_i_dVi*Vi + dL2_dlambda_i_dQ*Q
 
         #Trying changing Vi_node to lambda_i_node
@@ -117,9 +117,9 @@ class Generators:
         idx_Y = stampY(self.lambda_i_node, self.Q_node, dL2_dlambda_i_dQ, Y_val, Y_row, Y_col, idx_Y)
         idx_J = stampJ(self.lambda_i_node, Vi_J_stamp, J_val, J_row, idx_J)
 
-        Vset_hist =  Vr**2 + Vi**2 -self.Vset**2
-        dVset_dVr = 2*Vr
-        dVset_dVi = 2*Vi
+        Vset_hist =  -Vr**2 - Vi**2 +self.Vset**2
+        dVset_dVr = -2*Vr
+        dVset_dVi = -2*Vi
         Vset_J_stamp = -Vset_hist + dVset_dVr*Vr + dVset_dVi*Vi
 
         #trying to change Q_node to lambda_q_node
@@ -150,10 +150,11 @@ class Generators:
         g = Lqg
         ###############################################
         #VR row(changed minus to pluses for 153 and 154)
-        dIrgdVr = (P*(Vr**2-Vi**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLrg 
-        dIrgdVi = (Q*(Vi**2-Vr**2) - 2*P*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLig 
-        dIrgdQ = 2*Vr#(Vi)/(Vr**2+Vi**2)#d2L/dVrg_dLqg #(3)
-        IGD_hist = Lrg*dIrgdVr + Lig*dIrgdVi + Lqg*dIrgdQ 
+        #Lrg*(Pg*Vr + Qg*Vi)/(vr^2+Vi^2) + Lig(Pg*Vi - Qg*Vr)/(vr^2+Vi^2) + Lqg(-Vr^2 -Vi^2 +Vset^2)
+        dL_dVr_wr_Lrg = (P*(Vi**2-Vr**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLrg 
+        dL_dVr_wr_Lig = (Q*(Vr**2-Vi**2) - 2*P*Vr*Vi)/(Vr**2+Vi**2)**2#d2L/dVrg_dLig 
+        dL_dVr_wr_Lq = -2*Vr#(Vi)/(Vr**2+Vi**2)#d2L/dVrg_dLqg #(3)
+        IGD_hist = Lrg*dL_dVr_wr_Lrg + Lig*dL_dVr_wr_Lig + Lqg*dL_dVr_wr_Lq
 
         ###ALL PARTIALS COME DIRECTLY FROM WOLFRAM
         dL2_dVr_dVr=(2*(b*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3) + c**6*g + 3*c**4*d**2*g - e*c**3*x + 3*c**2*(d**4*g - d*f*x) + 3*e*c*d**2*x + d**6*g + d**3*f*x))/(c**2 + d**2)**3
@@ -175,10 +176,10 @@ class Generators:
         idx_J = stampJ(self.Vr_node, LAG_RG_J_stamp, J_val, J_row, idx_J)
 
         #VI row
-        dIigdVi = (Q*(Vi**2-Vr**2) + 2*P*Vr*Vi)/(Vr**2+Vi**2)**2
-        dIigdVr = (P*(Vi**2-Vr**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2
-        dIigdQ = 2*Vi#-(Vr)/(Vr**2+Vi**2)
-        IGDI_hist = Lrg*dIigdVr + Lig*dIigdVi + Lqg*dIigdQ
+        dL_dVi_wr_Lrg = (Q*(Vr**2-Vi**2) - 2*P*Vr*Vi)/(Vr**2+Vi**2)**2
+        dL_dVi_wr_Lig = (P*(Vr**2-Vi**2) + 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2
+        dL_dVi_wr_LQ = -2*Vi
+        IGDI_hist = Lrg*dL_dVi_wr_Lrg + Lig*dL_dVi_wr_Lig + Lqg*dL_dVi_wr_LQ
         ###ALL PARTIALS COME DIRECTLY FROM WOLFRAM
         dL2_dVi_dVr=(2*(b*(e*c**3*+ 3*c**2*d*f - 3*e*c*d**2 - d**3*f) + x*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3)))/(c**2 + d**2)**3
         dL2_dVi_dVi = (2*(-b*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3) + c**6*g + 3*c**4*d**2*g + e*c**3*x + 3*c**2*(d**4*g + d*f*x) - 3*e*c*d**2*x + d**6*g - d**3*f*x))/(c**2 + d**2)**3
@@ -200,7 +201,7 @@ class Generators:
 
         #Q ROW
         #Vset_hist = self.Vset**2 - Vr**2 - Vi**2
-        LBDQ_hist = Lrg*(-Vi/(Vr**2+Vi**2)**2) + Lig*(Vr/(Vr**2+Vi**2)**2)
+        LBDQ_hist = Lrg*(Vi/(Vr**2+Vi**2)**2) + Lig*(-Vr/(Vr**2+Vi**2)**2)
         ###ALL PARTIALS COME DIRECTLY FROM WOLFRAM
         dL2_dQ_dVr=(c**2*(-f) + 2*e*c*d + d**2*f)/(c**2 + d**2)**2
         dL2_dQ_dVi = (-e*c**2 - 2*c*d*f + e*d**2)/(c**2 + d**2)**2
