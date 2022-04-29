@@ -86,8 +86,8 @@ class Loads:
 
         #LAMBDA I ROW
         Iig_hist = (self.P*Vi-self.Q*Vr)/(Vr**2+Vi**2) #+Ifi
-        dL2_dlambda_i_dVr = (b*(c**2 - d**2) - 2*c*d*x)/(c**2 + d**2)**2#directly from wolfram
-        dL2_dlambda_i_dVi = (2*b*c*d + x*(c**2 - d**2))/(c**2 + d**2)**2
+        dL2_dlambda_i_dVr =dL2_dlambda_r_dVi #(b*(c**2 - d**2) - 2*c*d*x)/(c**2 + d**2)**2#directly from wolfram
+        dL2_dlambda_i_dVi = -dL2_dlambda_r_dVr #-(2*b*c*d + x*(c**2 - d**2))/(c**2 + d**2)**2
         #dIildIfi = 1
         Vi_J_stamp = -Iig_hist + (dL2_dlambda_i_dVr)*Vr + (dL2_dlambda_i_dVi)*Vi #+Ifi*dIildIfi
         #Trying changing Vi_node to lambda_i_node
@@ -116,9 +116,9 @@ class Loads:
         #Irg_hist_1 = (self.P*Vr+self.Q*Vi)/(Vr**2+Vi**2) #+ Ifr
         #Irg_hist_2 = (self.P*Vi-self.Q*Vr)/(Vr**2+Vi**2)
         #VR ROW
-        dIrldVr = ((self.P*(Vi**2-Vr**2) - 2*self.Q*Vr*Vi)/(Vr**2+Vi**2)**2) #this is d^2L/dVrl_dLrl(1_)
-        dIrldVi = ((self.Q*(Vr**2-Vi**2) - 2*self.P*Vr*Vi)/(Vr**2+Vi**2)**2) #this is d^2L/dVrl_dLil(2)
-        LAG_RL_hist = Lrl*(dIrldVr) + Lil*(dIrldVi)
+        dL_dVr_wr_Lrl = ((self.P*(Vi**2-Vr**2) - 2*self.Q*Vr*Vi)/(Vr**2+Vi**2)**2) #this is d^2L/dVrl_dLrl(1_)
+        dL_dVr_wr_Lil = ((self.Q*(Vr**2-Vi**2) - 2*self.P*Vr*Vi)/(Vr**2+Vi**2)**2) #this is d^2L/dVrl_dLil(2)
+        LAG_RL_hist = Lrl*(dL_dVr_wr_Lrl) + Lil*(dL_dVr_wr_Lil)
         ###ALL PARTIALS COME DIRECTLY FROM WOLFRAM
         dL2_dVr_dVr=-(2*(b*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3) + x*(-e*c**3 - 3*c**2*d*f + 3*e*c*d**2 + d**3*f)))/(c**2 + d**2)**3
         dL2_dVr_dVi = -(2*(b*(e*c**3 + 3*c**2*d*f - 3*e*c*d**2 - d**3*f) + x*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3)))/(c**2 + d**2)**3
@@ -134,14 +134,14 @@ class Loads:
         idx_J = stampJ(self.Vr_node, LAG_RL_J_stamp, J_val, J_row, idx_J)
 
         #VI ROW
-        dIildVi = (self.Q*(Vr**2-Vi**2)-2*self.P*Vr*Vi)/(Vr**2+Vi**2)**2#-dIrldVr#d2L/dvil_dlrl#these may need to be chaged
-        dIildVr = (self.P*(Vr**2-Vi**2)-2*self.Q*Vi*Vr)/(Vr**2+Vi**2)**2#dIrldVi#d2L/dvil_dIil
-        LAG_IL_hist = Lrl*(dIildVi) + Lil*(dIildVr)
+        dL_dVi_wr_Lrl= (self.Q*(Vr**2-Vi**2)-2*self.P*Vr*Vi)/(Vr**2+Vi**2)**2#-dIrldVr#d2L/dvil_dlrl#these may need to be chaged
+        dL_dVi_wr_Lil = -(self.P*(Vr**2-Vi**2)-2*self.Q*Vi*Vr)/(Vr**2+Vi**2)**2#dIrldVi#d2L/dvil_dIil# ORIGANALLY +P AND -Q
+        LAG_IL_hist = Lrl*(dL_dVi_wr_Lrl) + Lil*(dL_dVi_wr_Lil)
         ###ALL PARTIALS COME DIRECTLY FROM WOLFRAM
-        dL2_dVi_dVr =-(2*(b*(e*c**3 + 3*c**2*d*f - 3*e*c*d**2 - d**3*f) + x*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3)))/(c**2 + d**2)**3
-        dL2_dVi_dVi = (2*(b*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3) + x*(-e*c**3 - 3*c**2*d*f + 3*e*c*d**2 + d**3*f)))/(c**2 + d**2)**3
+        dL2_dVi_dVr =-(2*(b*(e*c**3 + 3*c**2*d*f - 3*e*c*d**2 - d**3*f) - x*(c**3*f + 3*e*c**2*d - 3*c*d**2*f - e*d**3)))/(c**2 + d**2)**3
+        dL2_dVi_dVi = (2*(b*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3) - x*(e*c**3 - 3*c**2*d*f - 3*e*c*d**2 + d**3*f)))/(c**2 + d**2)**3
         dL2_dVi_dlambda_r =  (b*(c**2 - d**2) - 2*c*d*x)/(c**2 + d**2)**2
-        dL2_dVi_dlambda_i = (2*b*c*d + x*(c**2 - d**2))/(c**2 + d**2)**2
+        dL2_dVi_dlambda_i = (2*b*c*d + x*(d**2 - c**2))/(c**2 + d**2)**2
         
         LAG_IL_J_stamp = (-LAG_IL_hist  + Vr*dL2_dVi_dVr + Vi*dL2_dVi_dVi + Lrl*(dL2_dVi_dlambda_r) + Lil*(dL2_dVi_dlambda_i))
         #Trying changing lambda_i_node to Vi_node

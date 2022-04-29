@@ -83,15 +83,13 @@ class Generators:
         # run check to make sure the bus actually has a Q node
         self.lambda_q_node = bus[Buses.bus_key_[self.Bus]].lambda_q_node
     
-    def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
+    def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J): 
+        ##ABSOLUTLY SURE EVERYTHING IS CORRECT HERE
         P = -self.P
         Vr = V[self.Vr_node]
         Vi = V[self.Vi_node]
         Q = V[self.Q_node]
-        ###REALLY NOT SURE HOW TO HANDLE THESE INFEASIABLITY
-        #Ifr = 1# V[self.Ifr_node]
-        #Ifi = 1#V[self.Ifi_node]
-        #Ifq = V[self.Ifq_node]
+        
 
         Irg_hist = (P*Vr+Q*Vi)/(Vr**2+Vi**2)    
         dL2_dlambda_r_dVr = (P*(Vi**2-Vr**2) - 2*Q*Vr*Vi)/(Vr**2+Vi**2)**2
@@ -157,12 +155,12 @@ class Generators:
         IGD_hist = Lrg*dL_dVr_wr_Lrg + Lig*dL_dVr_wr_Lig + Lqg*dL_dVr_wr_Lq
 
         ###ALL PARTIALS COME DIRECTLY FROM WOLFRAM
-        dL2_dVr_dVr=(2*(b*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3) + c**6*g + 3*c**4*d**2*g - e*c**3*x + 3*c**2*(d**4*g - d*f*x) + 3*e*c*d**2*x + d**6*g + d**3*f*x))/(c**2 + d**2)**3
-        dL2_dVr_dVi = (2*(b*(e*c**3 + 3*c**2*d*f - 3*e*c*d**2 - d**3*f) + x*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3)))/(c**2 + d**2)**3
-        dL2_dVr_dQ = (c**2*(-f) + 2*e*c*d + d**2*f)/(c**2 + d**2)**2
-        dL2_dVr_dlambda_r = (2*b*c*d + x*(c**2 - d**2))/(c**2 + d**2)**2
-        dL2_dVr_dlambda_i =(b*(d**2 - c**2) + 2*c*d*x)/(c**2 + d**2)**2
-        dL2_dVr_dlambda_q =2*c
+        dL2_dVr_dVr=-(2*(b*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3) + c**6*g + 3*c**4*d**2*g - e*c**3*x + 3*c**2*(d**4*g - d*f*x) + 3*e*c*d**2*x + d**6*g + d**3*f*x))/(c**2 + d**2)**3
+        dL2_dVr_dVi = -(2*(b*(e*c**3 + 3*c**2*d*f - 3*e*c*d**2 - d**3*f) + x*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3)))/(c**2 + d**2)**3
+        dL2_dVr_dQ = (c**2*f - 2*e*c*d - d**2*f)/(c**2 + d**2)**2
+        dL2_dVr_dlambda_r = (x*(d**2 - c**2) - 2*b*c*d)/(c**2 + d**2)**2
+        dL2_dVr_dlambda_i =(b*(c**2 - d**2) - 2*c*d*x)/(c**2 + d**2)**2
+        dL2_dVr_dlambda_q =-2*c
 
         LAG_RG_J_stamp = (-IGD_hist+ Vi*dL2_dVr_dVi + Vr*dL2_dVr_dVr + Lrg*(dL2_dVr_dlambda_r) + Lig*(dL2_dVr_dlambda_i) +b*dL2_dVr_dQ +g*dL2_dVr_dlambda_q)
 
@@ -181,12 +179,12 @@ class Generators:
         dL_dVi_wr_LQ = -2*Vi
         IGDI_hist = Lrg*dL_dVi_wr_Lrg + Lig*dL_dVi_wr_Lig + Lqg*dL_dVi_wr_LQ
         ###ALL PARTIALS COME DIRECTLY FROM WOLFRAM
-        dL2_dVi_dVr=(2*(b*(e*c**3*+ 3*c**2*d*f - 3*e*c*d**2 - d**3*f) + x*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3)))/(c**2 + d**2)**3
-        dL2_dVi_dVi = (2*(-b*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3) + c**6*g + 3*c**4*d**2*g + e*c**3*x + 3*c**2*(d**4*g + d*f*x) - 3*e*c*d**2*x + d**6*g - d**3*f*x))/(c**2 + d**2)**3
-        dL2_dVi_dQ = (-e*c**2 - 2*c*d*f + e*d**2)/(c**2 + d**2)**2
-        dL2_dVi_dlambda_r = (b*(d**2 - c**2) + 2*c*d*x)/(c**2 + d**2)**2
-        dL2_dVi_dlambda_i =(x*(d**2 - c**2) - 2*b*c*d)/(c**2 + d**2)**2
-        dL2_dVi_dlambda_q =2*d
+        dL2_dVi_dVr=-(2*(b*(e*c**3 + 3*c**2*d*f - 3*e*c*d**2 - d**3*f) + x*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3)))/(c**2 + d**2)**3
+        dL2_dVi_dVi = -(2*(-b*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3) + c**6*g + 3*c**4*d**2*g + e*c**3*x + 3*c**2*(d**4*g + d*f*x) - 3*e*c*d**2*x + d**6*g - d**3*f*x))/(c**2 + d**2)**3
+        dL2_dVi_dQ = (e*c**2 + 2*c*d*f - e*d**2)/(c**2 + d**2)**2
+        dL2_dVi_dlambda_r = (b*(c**2 - d**2) - 2*c*d*x)/(c**2 + d**2)**2
+        dL2_dVi_dlambda_i =(2*b*c*d + x*(c**2 - d**2))/(c**2 + d**2)**2
+        dL2_dVi_dlambda_q =-2*d
 
         LAG_RG_J_stamp = -IGDI_hist + Lrg*dL2_dVi_dlambda_r + Lig*dL2_dVi_dlambda_i + Vr*dL2_dVi_dVr + Vi*dL2_dVi_dVi +Lqg*dL2_dVi_dlambda_q +b*dL2_dVi_dQ
         ##Trying changing lambda_i_node to Vi_node
@@ -203,10 +201,10 @@ class Generators:
         #Vset_hist = self.Vset**2 - Vr**2 - Vi**2
         LBDQ_hist = Lrg*(Vi/(Vr**2+Vi**2)**2) + Lig*(-Vr/(Vr**2+Vi**2)**2)
         ###ALL PARTIALS COME DIRECTLY FROM WOLFRAM
-        dL2_dQ_dVr=(c**2*(-f) + 2*e*c*d + d**2*f)/(c**2 + d**2)**2
-        dL2_dQ_dVi = (-e*c**2 - 2*c*d*f + e*d**2)/(c**2 + d**2)**2
-        dL2_dQ_dlambda_r = -d/(c**2 + d**2)
-        dL2_dQ_dlambda_i =c/(c**2 + d**2)
+        dL2_dQ_dVr=(c**2*f - 2*e*c*d - d**2*f)/(c**2 + d**2)**2
+        dL2_dQ_dVi =  (e*c**2 + 2*c*d*f - e*d**2)/(c**2 + d**2)**2
+        dL2_dQ_dlambda_r = d/(c**2 + d**2)
+        dL2_dQ_dlambda_i =-c/(c**2 + d**2)
         LAG_Qg_history = -LBDQ_hist +Vr*dL2_dQ_dVr + Vi*dL2_dQ_dVi +Lrg*dL2_dQ_dlambda_r +Lig*dL2_dQ_dlambda_i
         idx_Y = stampY(self.Q_node, self.Vr_node, dL2_dQ_dVr, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.Q_node, self.Vi_node, dL2_dQ_dVi, Y_val, Y_row, Y_col, idx_Y) 
