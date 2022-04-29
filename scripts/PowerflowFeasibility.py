@@ -45,7 +45,7 @@ class PowerFlowFeasibility:
 
     def stamp_linear(self, branch, transformer, shunt, slack,feasibility_sources, v_init):
         size_Y = v_init.shape[0]
-        nnz = 10000*size_Y
+        nnz = 1000*size_Y
         Ylin_row = np.zeros(nnz, dtype=int)
         Ylin_col = np.zeros(nnz, dtype=int)
         Ylin_val = np.zeros(nnz, dtype=np.double)
@@ -79,7 +79,7 @@ class PowerFlowFeasibility:
         # You should decide the necessary arguments.
         ###USING EXACT SAME CODE AS ABOVE BUT INSTEAD just call stamp dual function
         size_Y = v_init.shape[0]
-        nnz = 10000*size_Y
+        nnz = 1000*size_Y
         Ylin_row = np.zeros(nnz, dtype=int)
         Ylin_col = np.zeros(nnz, dtype=int)
         Ylin_val = np.zeros(nnz, dtype=np.double)
@@ -111,7 +111,7 @@ class PowerFlowFeasibility:
 
     def stamp_nonlinear(self, generator, load,feasibility_sources, v_init):
         size_Y = v_init.shape[0]
-        nnz = 10000*size_Y
+        nnz = 1000*size_Y
         Ynlin_row = np.zeros(nnz, dtype=int)
         Ynlin_col = np.zeros(nnz, dtype=int)
         Ynlin_val = np.zeros(nnz, dtype=np.double)
@@ -141,7 +141,7 @@ class PowerFlowFeasibility:
         # You should decide the necessary arguments.
         ##USING SAME CODE AS ABOVE JUST INSTEAD OF CALLING STAMP CALL STAMP_DUAL
         size_Y = v_init.shape[0]
-        nnz = 10000*size_Y
+        nnz = 1000*size_Y
         Ynlin_row = np.zeros(nnz, dtype=int)
         Ynlin_col = np.zeros(nnz, dtype=int)
         Ynlin_val = np.zeros(nnz, dtype=np.double)
@@ -237,8 +237,8 @@ class PowerFlowFeasibility:
                 for ele in transformer:
                     v_inds.append(ele.Vaux_r_node)
                     v_inds.append(ele.Vaux_i_node)
-            vmax = 1.5
-            vmin = -1.5
+            vmax = 1.1
+            vmin = .5
             max_vstep = .15
         else:
             v_inds = None
@@ -284,7 +284,7 @@ class PowerFlowFeasibility:
             Y = Ynlin + Ylin + Ylin_D + Ynlin_D
             J = Jnlin + Jlin + Jlin_D + Jnlin_D
             Ydense = Y.todense() 
-            print(Ydense)
+            #print(Ydense)
             if check_for_zero_rows_cols:
                 zero_rows = []
                 zero_cols = []
