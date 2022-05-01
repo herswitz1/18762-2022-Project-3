@@ -237,9 +237,9 @@ class PowerFlowFeasibility:
                 for ele in transformer:
                     v_inds.append(ele.Vaux_r_node)
                     v_inds.append(ele.Vaux_i_node)
-            vmax = 1.1
-            vmin = .5
-            max_vstep = .15
+            vmax = 2.5
+            vmin = -2.5
+            max_vstep = 1
         else:
             v_inds = None
             vmax =  np.inf

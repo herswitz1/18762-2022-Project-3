@@ -76,8 +76,10 @@ class Buses:
         if self.Type == 1 or self.Type == 3:
             self.node_Vr = self._node_index.__next__()
             self.node_Vi = self._node_index.__next__()
-            print('Bus='+str(self.Bus) +' ' + str(self.node_Vr) + '_real voltage slack/PQ index ' +  str(self.node_Vi) + '_imganary voltage slack/PQ index')
-
+            if self.Type ==1:
+                print('Bus='+str(self.Bus) +' ' + str(self.node_Vr) + ' real voltage PQ index ' +  str(self.node_Vi) + ' imganary voltage PQ index')
+            else:
+                print('Bus='+str(self.Bus) +' ' + str(self.node_Vr) + ' real voltage slack index ' +  str(self.node_Vi) + ' imganary voltage slack index')
         # If PV Bus
         elif self.Type == 2:
             self.node_Vr = self._node_index.__next__()
@@ -104,7 +106,10 @@ class Buses:
             self.lambda_i_node = self._node_index.__next__()
             # self.lambda_Ifr = self._node_index.__next__()
             # self.lambda_Ifi = self._node_index.__next__()
-            print('Bus='+str(self.Bus) +' ' + str(self.lambda_r_node) + 'dual real lambda slack/PQ index ' +  str(self.lambda_i_node) + 'dual imganary lambda slack/PQ index')
+            if self.Type ==1:
+                print('Bus='+str(self.Bus) +' ' + str(self.lambda_r_node) + ' dual real voltage PQ index ' +  str(self.lambda_i_node) + ' dual imganary voltage PQ index')
+            else:
+                print('Bus='+str(self.Bus) +' ' + str(self.lambda_r_node) + ' dual real voltage slack index ' +  str(self.lambda_i_node) + ' dual imganary voltage slack index')
         # If PV Bus
         elif self.Type == 2:
             self.lambda_r_node = self._node_index.__next__()

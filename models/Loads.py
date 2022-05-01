@@ -141,7 +141,7 @@ class Loads:
         dL2_dVi_dVr =-(2*(b*(e*c**3 + 3*c**2*d*f - 3*e*c*d**2 - d**3*f) + x*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3)))/(c**2 + d**2)**3
         dL2_dVi_dVi = (2*(b*(c**3*f - 3*e*c**2*d - 3*c*d**2*f + e*d**3) + x*(-e*c**3 - 3*c**2*d*f + 3*e*c*d**2 + d**3*f)))/(c**2 + d**2)**3
         dL2_dVi_dlambda_r =  (b*(c**2 - d**2) - 2*c*d*x)/(c**2 + d**2)**2
-        dL2_dVi_dlambda_i = (2*b*c*d + x*(c**2 - d**2))/(c**2 + d**2)**2
+        dL2_dVi_dlambda_i = (-2*b*c*d + x*(c**2 - d**2))/(c**2 + d**2)**2
         
         LAG_IL_J_stamp = (-LAG_IL_hist  + Vr*dL2_dVi_dVr + Vi*dL2_dVi_dVi + Lrl*(dL2_dVi_dlambda_r) + Lil*(dL2_dVi_dlambda_i))
         #Trying changing lambda_i_node to Vi_node

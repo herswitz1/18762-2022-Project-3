@@ -9,7 +9,7 @@ casename = 'testcases/IEEE-14_stressed_1.RAW'
 # the settings for the solver
 settings = {
     "Tolerance": 1E-07,
-    "Max Iters": 100,
+    "Max Iters": 150,
     "Limiting":  False,
 }
 

@@ -28,12 +28,12 @@ def initialize(size_Y, bus, generator, slack, flat_start=False):
             # HINT: A very small, positive number usually works well
             V_init[ele.lambda_r_node] = .000001
             V_init[ele.lambda_i_node] = .000001
-            V_init[ele.node_Ifr] = 1
-            V_init[ele.node_Ifi]= 1
+            V_init[ele.node_Ifr] = 1#.000001
+            V_init[ele.node_Ifi]= 1#.000001
         for ele in generator:
-            V_init[ele.Q_node] += 1#-ele.Qinit#If i make this one it converges in 2 iteratarions with
+            V_init[ele.Q_node] += -ele.Qinit#If i make this one it converges in 2 iteratarions with
             # TODO: initialize the lambda associated with the Vset equation
-            V_init[ele.lambda_q_node] += .00001
+            V_init[ele.lambda_q_node] += .000001
         for ele in slack:
             V_init[ele.Slack_Ir_node] = ele.Ir_init
             V_init[ele.Slack_Ii_node] = ele.Ii_init
