@@ -35,20 +35,20 @@ def process_results(v, bus, slack, generator):
         if ele.Type == 1:
             Ifr = v[ele.lambda_r_node]
             Ifi = v[ele.lambda_i_node]
-            #print("%d, Real injection: %.3f, Imaginary Injection: %.3f" % (ele.Bus, Ifr, Ifi))
+            print("%d, Real injection: %.3f, Imaginary Injection: %.3f" % (ele.Bus, Ifr, Ifi))
             feasability_sources_real[np.abs(Ifr)] = ele.Bus
             feasability_sources_imag[np.abs(Ifi)] =ele.Bus
         if ele.Type == 2:
             Ifr = v[ele.lambda_r_node]
             Ifi = v[ele.lambda_i_node]
             Ifq = v[ele.lambda_q_node]
-            #print("%d, Real injection: %.3f, Imaginary Injection: %.3f, Q injection: %.3f" % (ele.Bus, Ifr, Ifi,Ifq))
+            print("%d, Real injection: %.3f, Imaginary Injection: %.3f, Q injection: %.3f" % (ele.Bus, Ifr, Ifi,Ifq))
             feasability_sources_real[np.abs(Ifr)] = ele.Bus
             feasability_sources_imag[np.abs(Ifi)] =ele.Bus
         if ele.Type == 3:
             Ifr = v[ele.lambda_r_node]
             Ifi = v[ele.lambda_i_node]
-            #print("Slack: %d, Real injection: %.3f, Imaginary Injection: %.3f" % (ele.Bus, Ifr, Ifi))
+            print("Slack: %d, Real injection: %.3f, Imaginary Injection: %.3f" % (ele.Bus, Ifr, Ifi))
             feasability_sources_real[np.abs(Ifr)] = ele.Bus
             feasability_sources_imag[np.abs(Ifi)] =ele.Bus
     FS_r = sorted(feasability_sources_real, reverse = True)

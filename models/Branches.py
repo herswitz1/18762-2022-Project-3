@@ -50,6 +50,7 @@ class Branches:
         self.G_pu = self.r/(self.r**2+self.x**2)
         self.B_pu= -self.x/(self.r**2+self.x**2)
 
+
         self.id = self._ids.__next__()
 
     def assign_indexes(self, bus):

@@ -167,7 +167,7 @@ class PowerFlowFeasibility:
         return (Ynlin_D, Jnlin_D)
          
 
-    def calc_resid_primal(self, v, generator, load, slack, branch, transformer, shunt):
+    def calc_resid_primal(self, v, generator, load, slack, branch, transformer, shunt, feasibility_sources):
         # This calculates the residuals of your constraint equations.
         resid = np.zeros(v.shape)
         for ele in slack:
@@ -182,6 +182,9 @@ class PowerFlowFeasibility:
             ele.calc_residuals(resid, v)
         for ele in shunt:
             ele.calc_residuals(resid, v)
+        for ele in feasibility_sources:
+            ele.calc_residuals(resid, v)
+        print(resid)
         return resid
 
     def calc_resid_dual(self,):
@@ -237,9 +240,9 @@ class PowerFlowFeasibility:
                 for ele in transformer:
                     v_inds.append(ele.Vaux_r_node)
                     v_inds.append(ele.Vaux_i_node)
-            vmax = 2.5
-            vmin = -2.5
-            max_vstep = 1
+            vmax = 4.5
+            vmin = -4.5
+            max_vstep = .1
         else:
             v_inds = None
             vmax =  np.inf
@@ -312,7 +315,7 @@ class PowerFlowFeasibility:
                 v = np.copy(v_sol)
 
         if converged:
-            primal_resid = self.calc_resid_primal(v_sol, generator, load, slack, branch, transformer, shunt)
+            primal_resid = self.calc_resid_primal(v_sol, generator, load, slack, branch, transformer, shunt,feasibility_sources)
             max_resid = np.amax(np.abs(primal_resid))
             print("Feasibility analysis converged in %d iterations" % (NR_count))
             print("Maximum primal residual in solution is %.3e" % (max_resid))

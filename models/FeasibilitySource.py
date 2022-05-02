@@ -30,8 +30,8 @@ class FeasibilitySource:
         # TODO: You decide how to implement variables for the feasibility injections
         #I 
         ###SOMETHING FEELS OFF HERE not sure if I am assigning nodes or adding more
-        # self.Ifr_node = bus[Buses.bus_key_[self.Bus]].node_Vr
-        # self.Ifi_node = bus[Buses.bus_key_[self.Bus]].node_Vi
+        self.Vr_node = bus[Buses.bus_key_[self.Bus]].node_Vr
+        self.Vi_node = bus[Buses.bus_key_[self.Bus]].node_Vi
         self.Ifr_node = bus[Buses.bus_key_[self.Bus]].lambda_r_node#since power flow equations are with respect to lambda row
         self.Ifi_node = bus[Buses.bus_key_[self.Bus]].lambda_i_node
         #self.Ifq_PV = bus[Buses.bus_key_[self.Bus]].node_Vi
@@ -67,3 +67,6 @@ class FeasibilitySource:
         # idx_Y = stampY(self.Ifi_node, self.lambda_Ifi_node, 2, Y_val, Y_row, Y_col, idx_Y)
         return (idx_Y, idx_J)
         #pass
+    def calc_residuals(self, resid, V):
+        resid[self.Vr_node] += V[self.lambda_Ifr_node]
+        resid[self.Vi_node] += V[self.lambda_Ifi_node]
