@@ -63,28 +63,13 @@ class Slack:
     def assign_dual_nodes(self,bus):
         # You need to implement this
         self.lambda_slack_r_node = bus[Buses.bus_key_[self.Bus]].lambda_r_node
-        print(self.lambda_slack_r_node)
         self.lambda_slack_i_node = bus[Buses.bus_key_[self.Bus]].lambda_i_node
         self.lambda_slack_Ir_node = Buses._node_index.__next__()
         self.lambda_slack_Ii_node = Buses._node_index.__next__()
         pass
 
     def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
-        # # slack currents leaving their nodes
-        # idx_Y += stampY(self.Vr_node, self.Slack_Ir_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        # idx_Y += stampY(self.Vi_node, self.Slack_Ii_node, 1, Y_val, Y_row, Y_col, idx_Y)
-
-        # # enforce slack constraints
-        # idx_Y += stampY(self.Slack_Ir_node, self.Vr_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        # #idx_Y = stampY(self.Slack_Ir_node, self.slack_Ifr_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        # idx_J += stampJ(self.Slack_Ir_node, self.Vr_set, J_val, J_row, idx_J)#***
-        # #idx_J = stampJ(self.lambda_slack_r_node, self.Vr_set, J_val, J_row, idx_J)
-
-        # idx_Y += stampY(self.Slack_Ii_node, self.Vi_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        # #idx_Y = stampY(self.Slack_II_node, self.slack_Ifi_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        # idx_J += stampJ(self.Slack_Ii_node, self.Vi_set, J_val, J_row, idx_J)#***
-        # #idx_J = stampJ(self.lambda_slack_i_node, self.Vi_set, J_val, J_row, idx_J)
-
+        
         ################################################
         idx_Y = stampY(self.lambda_slack_r_node, self.Slack_Ir_node, 1, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.lambda_slack_i_node, self.Slack_Ii_node, 1, Y_val, Y_row, Y_col, idx_Y)
@@ -99,51 +84,20 @@ class Slack:
         idx_J = stampJ(self.lambda_slack_Ir_node, self.Vr_set, J_val, J_row, idx_J)
         idx_J = stampJ(self.lambda_slack_Ii_node, self.Vi_set, J_val, J_row, idx_J)
 
-        #changed lambda_slack_i_node ot Vi_node
-        #idx_Y = stampY(self.Slack_Ii_node, self.Vi_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        ##idx_Y = stampY(self.Slack_Ii_node, self.Vi_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        #idx_J = stampJ(self.Slack_Ii_node, self.Vi_set, J_val, J_row, idx_J)#***
-        #idx_J = stampJ(self.Slack_Ii_node, self.Vi_set, J_val, J_row, idx_J)
 
         return (idx_Y, idx_J)
 
     def stamp_dual(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
-        # You need to implement this.
-        #linear so take the transpose(using lambda and flipted row and colume)
-         # slack currents leaving their nodes
-         #NOT SURE HOW TO DEAL WITH FEASABILITY TRANSPOSE FOR SLACK
-        # idx_Y += stampY(self.lambda_slack_r_node, self.lambda_slack_r_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        # idx_Y += stampY(self.lambda_slack_i_node, self.lambda_slack_i_node, 1, Y_val, Y_row, Y_col, idx_Y)
-
+        
         # # enforce slack constraints
         idx_Y = stampY(self.Slack_Ir_node, self.lambda_slack_r_node, 1, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.Slack_Ii_node, self.lambda_slack_i_node, 1, Y_val, Y_row, Y_col, idx_Y)
 
-        #idx_Y = stampY(self.Vr_node, self.Slack_Ir_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        #idx_J += stampJ(self.Vr_node, self.Vr_set, J_val, J_row, idx_J)####*******(oritanaly was lambda_slack_r_node
-        #idx_J = stampJ(self.Slack_Ir_node, self.Vr_set, J_val, J_row, idx_J)
-
-        # idx_Y = stampY(self.lambda_slack_i_node, self.lambda_slack_Ii_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        # idx_J = stampJ(self.lambda_slack_i_node, self.Vi_set, J_val, J_row, idx_J)
 
         #############################################
         idx_Y = stampY(self.Vr_node, self.lambda_slack_Ir_node, 1, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.Vi_node, self.lambda_slack_Ii_node, 1, Y_val, Y_row, Y_col, idx_Y)
 
-        # # enforce slack constraints (changed lambda_slack_r_node to Vr_node)
-        # idx_Y = stampY(self.Slack_Ir_node, self.Vr_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        # #idx_Y = stampY(self.Slack_Ir_node, self.slack_Ifr_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        
-        # idx_J = stampJ(self.Vr_node, self.Vr_set, J_val, J_row, idx_J)#***
-        # idx_J = stampJ(self.Vi_node, self.Vi_set, J_val, J_row, idx_J)#***
-        
-        # #idx_J = stampJ(self.lambda_slack_r_node, self.Vr_set, J_val, J_row, idx_J)
-
-        # #changed lambda_slack_i_node ot Vi_node
-        # idx_Y = stampY(self.Slack_Ii_node, self.Vi_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        # #idx_Y = stampY(self.Slack_II_node, self.slack_Ifi_node, 1, Y_val, Y_row, Y_col, idx_Y)
-        # idx_J = stampJ(self.Slack_Ii_node, self.Vi_set, J_val, J_row, idx_J)#***
-        # #idx_J = stampJ(self.lambda_slack_i_node, self.Vi_set, J_val, J_row, idx_J)
         return (idx_Y, idx_J)
         
 
