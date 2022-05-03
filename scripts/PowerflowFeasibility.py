@@ -43,7 +43,7 @@ class PowerFlowFeasibility:
     def check_error(self, v, v_sol):
         return np.abs(np.amax(np.abs(v) -np.abs(v_sol)))#np.abs(np.amax(np.abs(v)) - np.amax(np.abs(v_sol)))
 
-    def stamp_linear(self, branch, transformer, shunt, slack,feasibility_sources, v_init):
+    def stamp_linear(self, branch, transformer, shunt, slack,feasibility_sources, v_init,Tx):
         size_Y = v_init.shape[0]
         nnz = 1000*size_Y
         Ylin_row = np.zeros(nnz, dtype=int)
@@ -56,11 +56,11 @@ class PowerFlowFeasibility:
         idx_J = 0
 
         for ele in branch:
-            (idx_Y, idx_J) = ele.stamp(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
+            (idx_Y, idx_J) = ele.stamp(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J,Tx)
         for ele in transformer:
-            (idx_Y, idx_J) = ele.stamp(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
+            (idx_Y, idx_J) = ele.stamp(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J,Tx)
         for ele in shunt:
-            (idx_Y, idx_J) = ele.stamp(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
+            (idx_Y, idx_J) = ele.stamp(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J,Tx)
         for ele in slack:
             (idx_Y, idx_J) = ele.stamp(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
         ##NOT SURE ABOUT THE FEASIBILITY SOURCE
@@ -74,7 +74,7 @@ class PowerFlowFeasibility:
         Jlin = csc_matrix((Jlin_val, (Jlin_row, Jlin_col)), shape=(size_Y, 1), dtype=np.float64)
         return (Ylin, Jlin)
 
-    def stamp_linear_dual(self, branch, transformer, shunt, slack,feasibility_sources, v_init):
+    def stamp_linear_dual(self, branch, transformer, shunt, slack,feasibility_sources, v_init, Tx):
         # Generate the dual stamps for all your linear devices.
         # You should decide the necessary arguments.
         ###USING EXACT SAME CODE AS ABOVE BUT INSTEAD just call stamp dual function
@@ -90,11 +90,11 @@ class PowerFlowFeasibility:
         idx_J = 0
 
         for ele in branch:
-            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
+            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J,Tx)
         for ele in transformer:
-            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
+            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J,Tx)
         for ele in shunt:
-            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
+            (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J,Tx)
         for ele in slack:
             (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
         ##NOT SURE ABOUT THE FEASIBILITY SOURCE
@@ -204,7 +204,8 @@ class PowerFlowFeasibility:
                           branch,
                           shunt,
                           load,
-                          feasibility_sources):
+                          feasibility_sources,
+                          Tx):
         """Runs a feasibility analysis of the positive sequence power flow problem on this network
            using the Equivalent Circuit Formulation. Minimize the L2-norm of slack injections
            Required to satisfy KCL at each node in the split-circuit network.
@@ -250,13 +251,13 @@ class PowerFlowFeasibility:
             max_vstep = np.inf
 
         # # # Stamp Linear Power Grid Elements into Y matrix # # #
-        Ylin, Jlin = self.stamp_linear(branch, transformer, shunt, slack, feasibility_sources, v_init)
+        Ylin, Jlin = self.stamp_linear(branch, transformer, shunt, slack, feasibility_sources, v_init,Tx)
 
         # TODO: PART 1, STEP 2.1 - Complete the stamp_linear_dual function which create the dual stamps
         #  associated with all of the linear elements of the network.
         #  This function should call the stamp_dual function of each linear element and return a Y matrix of dual stamps.
         #  You need to decide the input arguments and return values.
-        Ylin_D, Jlin_D = self.stamp_linear_dual(branch, transformer, shunt, slack, feasibility_sources, v_init)
+        Ylin_D, Jlin_D = self.stamp_linear_dual(branch, transformer, shunt, slack, feasibility_sources, v_init,Tx)
 
         
 

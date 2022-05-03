@@ -81,7 +81,7 @@ class Transformers:
             self.Vaux_i_lambda = Buses._node_index.__next__()
 
 
-    def stamp(self, V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J):
+    def stamp(self, V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J,Tx):
         if not self.status:
             return (idx_Y, idx_J)
         if global_vars.xfmr_model == 0:
@@ -191,6 +191,9 @@ class Transformers:
             # idx_Y = stampY(self.Vi_to_node, self.Vr_to_node, self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         
         ##############################(addjusting the transformer stamps row locations)
+            Homoto_G = self.G_pu*Tx
+            Homoto_B = self.B_pu*Tx
+            Homoto_SH = self.Bsh_raw*Tx
             # I_aux_r leaving Vr_from_node
             idx_Y = stampY(self.lambda_r_from, self.Iaux_r_node, 1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
             # I_aux_i leaving lambda_i_from
@@ -206,37 +209,37 @@ class Transformers:
             # Vaux_r KCL #POSSIBLE NEED TO CHANCGE VAUX AND AND IAUX TO LAMBDAS THIS GOES FOR ALL THEM THEM
             idx_Y = stampY(self.Vaux_r_lambda, self.Iaux_r_node, -trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
             idx_Y = stampY(self.Vaux_r_lambda, self.Iaux_i_node, -trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_r_lambda, self.Vaux_r_node, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_r_lambda, self.Vr_to_node, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_r_lambda, self.Vaux_i_node, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_r_lambda, self.Vi_to_node, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_r_lambda, self.Vaux_i_node, -self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_lambda, self.Vaux_r_node, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_lambda, self.Vr_to_node, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_lambda, self.Vaux_i_node, -Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_lambda, self.Vi_to_node, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_lambda, self.Vaux_i_node, -Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
             # Vaux_i KCL
             idx_Y = stampY(self.Vaux_i_lambda, self.Iaux_r_node, trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
             idx_Y = stampY(self.Vaux_i_lambda, self.Iaux_i_node, -trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_i_lambda, self.Vaux_i_node, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_i_lambda, self.Vi_to_node, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_i_lambda, self.Vaux_r_node, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_i_lambda, self.Vr_to_node, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_i_lambda, self.Vaux_r_node, self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_lambda, self.Vaux_i_node, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_lambda, self.Vi_to_node, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_lambda, self.Vaux_r_node, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_lambda, self.Vr_to_node, -Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_lambda, self.Vaux_r_node, Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
             
             # Vto losses
-            idx_Y = stampY(self.lambda_r_to, self.Vr_to_node, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.lambda_r_to, self.Vaux_r_node, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)            
-            idx_Y = stampY(self.lambda_r_to, self.Vi_to_node, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.lambda_r_to, self.Vaux_i_node, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.lambda_r_to, self.Vi_to_node, -self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_r_to, self.Vr_to_node, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_r_to, self.Vaux_r_node, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)            
+            idx_Y = stampY(self.lambda_r_to, self.Vi_to_node, -Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_r_to, self.Vaux_i_node, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_r_to, self.Vi_to_node, -Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
 
-            idx_Y = stampY(self.lambda_r_to, self.Vi_to_node, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.lambda_i_to, self.Vaux_i_node, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.lambda_i_to, self.Vr_to_node, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.lambda_i_to, self.Vaux_r_node, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.lambda_i_to, self.Vr_to_node, self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_r_to, self.Vi_to_node, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_i_to, self.Vaux_i_node, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_i_to, self.Vr_to_node, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_i_to, self.Vaux_r_node, -Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.lambda_i_to, self.Vr_to_node, Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
 
 
         return (idx_Y, idx_J)
 
-    def stamp_dual(self, V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J):
+    def stamp_dual(self, V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J,Tx):
         # You need to implement this.
         #since transformer is linear it is just the transpose of the obve except
         # SO I ACTUALLY DID NOT FLIP I AND J I JUST INVERTED VALUE, ONLY G WAS LEFT THE SAME IS THIS EFFECTIVELY THE SAME 
@@ -290,6 +293,9 @@ class Transformers:
             # idx_Y = stampY(self.lambda_i_to, self.lambda_r_to, -self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         
             ################################################################(trying to flip transformer rows)
+            Homoto_G = self.G_pu*Tx
+            Homoto_B = self.B_pu*Tx
+            Homoto_SH = self.Bsh_raw*Tx
 
             idx_Y = stampY(self.Vr_from_node, self.Iaux_r_lambda, -1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
             # I_aux_i leaving lambda_i_from
@@ -305,32 +311,32 @@ class Transformers:
             # Vaux_r KCL
             idx_Y = stampY(self.Vaux_r_node, self.Iaux_r_lambda, trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
             idx_Y = stampY(self.Vaux_r_node, self.Iaux_i_lambda, trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_r_node, self.Vaux_r_lambda, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_r_node, self.lambda_r_to, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_r_node, self.Vaux_i_lambda, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_r_node, self.lambda_i_to, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_r_node, self.Vaux_i_lambda, self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_node, self.Vaux_r_lambda, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_node, self.lambda_r_to, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_node, self.Vaux_i_lambda, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_node, self.lambda_i_to, -Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_r_node, self.Vaux_i_lambda, Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
             # Vaux_i KCL
             idx_Y = stampY(self.Vaux_i_node, self.Iaux_r_lambda, -trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
             idx_Y = stampY(self.Vaux_i_node, self.Iaux_i_lambda, trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_i_node, self.Vaux_i_lambda, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_i_node, self.lambda_i_to, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_i_node, self.Vaux_r_lambda, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_i_node, self.lambda_r_to, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vaux_i_node, self.Vaux_r_lambda, -self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_node, self.Vaux_i_lambda, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_node, self.lambda_i_to, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_node, self.Vaux_r_lambda, -Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_node, self.lambda_r_to, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vaux_i_node, self.Vaux_r_lambda, -Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
             
             # Vto losses
-            idx_Y = stampY(self.Vr_to_node, self.lambda_r_to, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vr_to_node, self.Vaux_r_lambda, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)            
-            idx_Y = stampY(self.Vr_to_node, self.lambda_i_to, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vr_to_node, self.Vaux_i_lambda, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vr_to_node, self.lambda_i_to, self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vr_to_node, self.lambda_r_to, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vr_to_node, self.Vaux_r_lambda, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)            
+            idx_Y = stampY(self.Vr_to_node, self.lambda_i_to, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vr_to_node, self.Vaux_i_lambda, -Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vr_to_node, self.lambda_i_to, Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
 
-            idx_Y = stampY(self.Vi_to_node, self.lambda_i_to, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vi_to_node, self.Vaux_i_lambda, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vi_to_node, self.lambda_r_to, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vi_to_node, self.Vaux_r_lambda, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            idx_Y = stampY(self.Vi_to_node, self.lambda_r_to, -self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vi_to_node, self.lambda_i_to, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vi_to_node, self.Vaux_i_lambda, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vi_to_node, self.lambda_r_to, -Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vi_to_node, self.Vaux_r_lambda, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
+            idx_Y = stampY(self.Vi_to_node, self.lambda_r_to, -Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
 
 
 
