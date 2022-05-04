@@ -152,57 +152,6 @@ class Loads:
         idx_J = stampJ(self.Vi_node, LAG_IL_J_stamp, J_val, J_row, idx_J)
         
         
-        
-        #####ORIGANAL MANUALE APPROACH FOR IMPLEMENTING
-        # ##breaking up the very long equations
-        # LBR_vr1 = (Lil*(2*self.Q*Vr-2*Vi*self.P))/(Vr**2+Vi**2)**2
-        # LBR_vr2 = ((4*Vr*Lil)*(self.Q*(Vr**2-Vi**2)-2*Vr*Vi*self.P))/(Vr**2+Vi**2)**3##SEEM TO BE PROBLEM HERE
-        # LBR_vr3 = (Lrl*(-2*self.Q*Vi-2*Vr*self.P))/(Vr**2+Vi**2)**2
-        # LBR_vr4 = ((4*Vr*Lrl)*(self.P*(Vi**2-Vr**2)-2*Vr*Vi*self.Q))/(Vr**2+Vi**2)**3#SEEMS TO BE PROBLEM HERE
-        # d2L_d2vrl = LBR_vr1 - LBR_vr2 + LBR_vr3 - LBR_vr4 #(3)
-
-        # LBR_vi1 = (Lil*(-2*self.Q*Vi-2*Vr*self.P))/(Vr**2+Vi**2)**2
-        # LBR_vi2 = ((4*Vi*Lil)*(self.Q*(Vr**2-Vi**2)-2*Vr*Vi*self.P))/(Vr**2+Vi**2)**3
-        # LBR_vi3 = (Lrl*(2*self.P*Vi-2*Vr*self.Q))/(Vr**2+Vi**2)**2
-        # LBR_vi4 = ((4*Vi*Lrl)*(self.P*(Vi**2-Vr**2)-2*Vr*Vi*self.Q))/(Vr**2+Vi**2)**3
-        # d2L_dvrldvil = LBR_vi1 - LBR_vi2 + LBR_vi3 - LBR_vi4#(4)
-
-        # LAG_RL_J_stamp = (LAG_RL_hist- Vi*d2L_dvrldvil - Vr*d2L_d2vrl - Lrl*(dIrldVr) - Lil*(dIrldVi) )
-        # #Trying changing lambda_r_node to Vr_node
-        # idx_Y += stampY(self.Vr_node, self.Vr_node, d2L_d2vrl, Y_val, Y_row, Y_col, idx_Y)
-        # idx_Y += stampY(self.Vr_node, self.Vi_node, d2L_dvrldvil, Y_val, Y_row, Y_col, idx_Y)
-        # idx_Y += stampY(self.Vr_node, self.lambda_r_node, dIrldVr, Y_val, Y_row, Y_col, idx_Y)#POWER FLOW TRANSPOSE
-        # idx_Y += stampY(self.Vr_node, self.lambda_i_node, dIrldVi, Y_val, Y_row, Y_col, idx_Y)#POWER FLOW TRANSPOSE
-        # idx_J += stampJ(self.Vr_node, LAG_RL_J_stamp, J_val, J_row, idx_J)
-        #########
-        ##NOW STAMPING LAMBDA_IL ROW
-        # Iig_hist = (self.P*Vi-self.Q*Vr)/(Vr**2+Vi**2)
-        # dIildVi = (self.Q*(Vr**2-Vi**2)-2*self.P*Vr*Vi)/(Vr**2+Vi**2)**2#-dIrldVr#d2L/dvil_dlrl#these may need to be chaged
-        # dIildVr = (self.P*(Vr**2-Vi**2)-2*self.Q*Vi*Vr)/(Vr**2+Vi**2)**2#dIrldVi#d2L/dvil_dIil
-
-        # ##breaking up the very long equations
-        # LBI_vi1 = (Lil*(-2*self.Q*Vr-2*Vi*self.P))/(Vr**2+Vi**2)**2
-        # LBI_vi2 = ((4*Vi*Lil)*(self.P*(Vr**2-Vi**2)-2*Vr*Vi*self.Q))/(Vr**2+Vi**2)**3
-        # LBI_vi3 = (Lrl*(-2*self.Q*Vi-2*Vr*self.P))/(Vr**2+Vi**2)**2
-        # LBI_vi4 = ((4*Vi*Lrl)*(self.Q*(Vr**2-Vi**2)-2*Vr*Vi*self.P))/(Vr**2+Vi**2)**3
-        # d2L_d2vil = LBI_vi1 - LBI_vi2 + LBI_vi3 - LBI_vi4
-
-        # LBI_vr1 = (Lil*(2*self.P*Vr-2*Vi*self.Q))/(Vr**2+Vi**2)**2
-        # LBI_vr2 = ((4*Vr*Lil)*(self.P*(Vr**2-Vi**2)-2*Vr*Vi*self.Q))/(Vr**2+Vi**2)**3
-        # LBI_vr3 = (Lrl*(2*self.Q*Vr-2*Vi*self.P))/(Vr**2+Vi**2)**2
-        # LBI_vr4 = ((4*Vr*Lrl)*(self.Q*(Vr**2-Vi**2)-2*Vr*Vi*self.P))/(Vr**2+Vi**2)**3
-        # d2L_dvildvrl = LBI_vr1 - LBI_vr2 + LBI_vr3 - LBI_vr4
-
-        # LAG_IL_hist = Lrl*(dIildVi) + Lil*(dIildVr)
-
-        # LAG_IL_J_stamp = (LAG_IL_hist  - Vr*d2L_dvildvrl - Vi*d2L_d2vil - Lrl*(dIildVr) - Lil*(dIildVi))
-        # #Trying changing lambda_i_node to Vi_node
-        # idx_Y += stampY(self.Vi_node, self.Vr_node,d2L_dvildvrl, Y_val, Y_row, Y_col, idx_Y)
-        # idx_Y += stampY(self.Vi_node, self.Vi_node,d2L_d2vil , Y_val, Y_row, Y_col, idx_Y)
-        # idx_Y += stampY(self.Vi_node, self.lambda_r_node, dIildVi, Y_val, Y_row, Y_col, idx_Y)#power flow transpose
-        # idx_Y += stampY(self.Vi_node, self.lambda_i_node, dIildVr, Y_val, Y_row, Y_col, idx_Y)#power flow transpose
-        # idx_J += stampJ(self.Vi_node, LAG_IL_J_stamp, J_val, J_row, idx_J)
-        
 
         return (idx_Y, idx_J)
 

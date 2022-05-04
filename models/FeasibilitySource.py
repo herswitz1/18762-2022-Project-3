@@ -47,9 +47,7 @@ class FeasibilitySource:
         
         idx_Y = stampY(self.Ifr_node, self.lambda_Ifr_node, 1, Y_val, Y_row, Y_col, idx_Y)#power flow
         idx_Y = stampY(self.Ifi_node, self.lambda_Ifi_node, 1, Y_val, Y_row, Y_col, idx_Y)#power flow
-        #Trying different implementation
-        # idx_Y = stampY(self.Ifr_lambda_node, self.lambda_Ifr_node, 1, Y_val, Y_row, Y_col, idx_Y)#power flow
-        # idx_Y = stampY(self.Ifi_lambda_node, self.lambda_Ifi_node, 1, Y_val, Y_row, Y_col, idx_Y)#power flow
+       
         
 
         return (idx_Y, idx_J)
@@ -60,11 +58,6 @@ class FeasibilitySource:
         idx_Y = stampY(self.lambda_Ifi_node, self.Ifi_node, 1, Y_val, Y_row, Y_col, idx_Y)#hessen 
         idx_Y = stampY(self.lambda_Ifr_node, self.lambda_Ifr_node, 2, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.lambda_Ifi_node, self.lambda_Ifi_node, 2, Y_val, Y_row, Y_col, idx_Y)
-        ##Trying different implementation
-        # idx_Y = stampY(self.Ifr_node, self.Ifr_lambda_node, 1, Y_val, Y_row, Y_col, idx_Y)#hessen
-        # idx_Y = stampY(self.Ifi_node, self.Ifi_lambda_node, 1, Y_val, Y_row, Y_col, idx_Y)#hessen 
-        # idx_Y = stampY(self.Ifr_node, self.lambda_Ifr_node, 2, Y_val, Y_row, Y_col, idx_Y)
-        # idx_Y = stampY(self.Ifi_node, self.lambda_Ifi_node, 2, Y_val, Y_row, Y_col, idx_Y)
         return (idx_Y, idx_J)
         #pass
     def calc_residuals(self, resid, V):

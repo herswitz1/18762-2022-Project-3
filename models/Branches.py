@@ -69,20 +69,10 @@ class Branches:
     def stamp(self, V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J,Tx):
         if not self.status:
             return (idx_Y, idx_J)
-        Homoto_G = self.G_pu*Tx
-        Homoto_B = self.B_pu*Tx
-        Homoto_SH = self.b*Tx
+        Homoto_G = self.G_pu*(20*(1-Tx)) + self.G_pu*Tx
+        Homoto_B = self.B_pu*(20*(1-Tx)) +self.B_pu*Tx
+        Homoto_SH = self.b*(20*(1-Tx)) +self.b*Tx
         # Line Bs
-        # idx_Y = stampY(self.Vr_from_node, self.Vi_from_node, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vr_from_node, self.Vi_to_node, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vi_from_node, self.Vr_from_node, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vi_from_node, self.Vr_to_node, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vr_to_node, self.Vi_to_node, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vr_to_node, self.Vi_from_node, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vi_to_node, self.Vr_to_node, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vi_to_node, self.Vr_from_node, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-
-        #Trying to stamp linear components in lambda rows (Vr_from_node = lambda_r_from), (Vi_from_node=lambda_i_from) same for you
         idx_Y = stampY(self.lambda_r_from, self.Vi_from_node, -Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.lambda_r_from, self.Vi_to_node, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.lambda_i_from, self.Vr_from_node, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
@@ -94,12 +84,6 @@ class Branches:
         
         
         # Line Shunts
-        # idx_Y = stampY(self.Vr_from_node, self.Vi_from_node, -Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vi_from_node, self.Vr_from_node, Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vr_to_node, self.Vi_to_node, -Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vi_to_node, self.Vr_to_node, Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-
-        #Trying to change stamps locations
         idx_Y = stampY(self.lambda_r_from, self.Vi_from_node, -Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.lambda_i_from, self.Vr_from_node, Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.lambda_r_to, self.Vi_to_node, -Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
@@ -109,16 +93,6 @@ class Branches:
             return (idx_Y, idx_J)
 
         # Line Gs
-        # idx_Y = stampY(self.Vr_from_node, self.Vr_from_node, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vi_from_node, self.Vi_from_node, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vr_to_node, self.Vr_to_node, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vi_to_node, self.Vi_to_node, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vr_from_node, self.Vr_to_node, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vi_from_node, self.Vi_to_node, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vr_to_node, self.Vr_from_node, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.Vi_to_node, self.Vi_from_node, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-    
-        #Trying to change the lambda rows for linear 
         idx_Y = stampY(self.lambda_r_from, self.Vr_from_node, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.lambda_i_from, self.Vi_from_node, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.lambda_r_to, self.Vr_to_node, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
@@ -133,20 +107,10 @@ class Branches:
         # You need to implement this.(IMPLEMENTING TRANSPOSE OF THE ABOVE)(negate non G terms)
         if not self.status:
             return (idx_Y, idx_J)
-        Homoto_G = self.G_pu*Tx
-        Homoto_B = self.B_pu*Tx
-        Homoto_SH = self.b*Tx
+        Homoto_G = self.G_pu*(20*(1-Tx)) + self.G_pu*Tx
+        Homoto_B = self.B_pu*(20*(1-Tx)) +self.B_pu*Tx
+        Homoto_SH = self.b*(20*(1-Tx)) +self.b*Tx
         # Line Bs lambda
-        # idx_Y = stampY(self.lambda_r_from, self.lambda_i_from, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_r_from, self.lambda_i_to, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_i_from, self.lambda_r_from, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_i_from, self.lambda_r_to, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_r_to, self.lambda_i_to, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_r_to, self.lambda_i_from, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_i_to, self.lambda_r_to, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_i_to, self.lambda_r_from, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-
-        ##Changing the dual row stamp
         idx_Y = stampY(self.Vr_from_node, self.lambda_i_from, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.Vr_from_node, self.lambda_i_to, -Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.Vi_from_node, self.lambda_r_from, -Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
@@ -157,11 +121,6 @@ class Branches:
         idx_Y = stampY(self.Vi_to_node, self.lambda_r_from, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         
         # Line Shunts lambda
-        # idx_Y = stampY(self.lambda_r_from, self.lambda_i_from, Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_i_from, self.lambda_r_from, -Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_r_to, self.lambda_i_to, Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_i_to, self.lambda_r_to, -Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-
         idx_Y = stampY(self.Vr_from_node, self.lambda_i_from, Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.Vi_from_node, self.lambda_r_from, -Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.Vr_to_node, self.lambda_i_to, Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
@@ -171,17 +130,6 @@ class Branches:
             return (idx_Y, idx_J)
 
         # Line Gs lambda
-        # idx_Y = stampY(self.lambda_r_from, self.lambda_r_from, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_i_from, self.lambda_i_from, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_r_to, self.lambda_r_to, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_i_to, self.lambda_i_to, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_r_from, self.lambda_r_to, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_i_from, self.lambda_i_to, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_r_to, self.lambda_r_from, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        # idx_Y = stampY(self.lambda_i_to, self.lambda_i_from, -Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-
-
-        ####
         idx_Y = stampY(self.Vr_from_node, self.lambda_r_from, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.Vi_from_node, self.lambda_i_from, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.Vr_to_node, self.lambda_r_to, Homoto_G, Ylin_val, Ylin_row, Ylin_col, idx_Y)

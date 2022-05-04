@@ -148,48 +148,7 @@ class Transformers:
             # where you do need to add extra variables
             trcos = self.tr*np.cos(self.ang*np.pi/180.0)
             trsin = self.tr*np.sin(self.ang*np.pi/180.0)
-            # # I_aux_r leaving Vr_from_node
-            # idx_Y = stampY(self.Vr_from_node, self.Iaux_r_node, 1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # # I_aux_i leaving lambda_i_from
-            # idx_Y = stampY(self.Vi_from_node, self.Iaux_i_node, 1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # # Vr_from setpoint
-            # idx_Y = stampY(self.Iaux_r_node, self.Vr_from_node, -1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Iaux_r_node, self.Vaux_r_node, trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Iaux_r_node, self.Vaux_i_node, -trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # # Vi_from setpoint
-            # idx_Y = stampY(self.Iaux_i_node, self.Vi_from_node, -1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Iaux_i_node, self.Vaux_r_node, trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Iaux_i_node, self.Vaux_i_node, trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # # Vaux_r KCL
-            # idx_Y = stampY(self.Vaux_r_node, self.Iaux_r_node, -trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_r_node, self.Iaux_i_node, -trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_r_node, self.Vaux_r_node, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_r_node, self.Vr_to_node, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_r_node, self.Vaux_i_node, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_r_node, self.Vi_to_node, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_r_node, self.Vaux_i_node, -self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # # Vaux_i KCL
-            # idx_Y = stampY(self.Vaux_i_node, self.Iaux_r_node, trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_i_node, self.Iaux_i_node, -trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_i_node, self.Vaux_i_node, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_i_node, self.Vi_to_node, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_i_node, self.Vaux_r_node, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_i_node, self.Vr_to_node, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_i_node, self.Vaux_r_node, self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            
-            # # Vto losses
-            # idx_Y = stampY(self.Vr_to_node, self.Vr_to_node, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vr_to_node, self.Vaux_r_node, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)            
-            # idx_Y = stampY(self.Vr_to_node, self.Vi_to_node, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vr_to_node, self.Vaux_i_node, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vr_to_node, self.Vi_to_node, -self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-
-            # idx_Y = stampY(self.Vi_to_node, self.Vi_to_node, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vi_to_node, self.Vaux_i_node, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vi_to_node, self.Vr_to_node, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vi_to_node, self.Vaux_r_node, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vi_to_node, self.Vr_to_node, self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        
+           
         ##############################(addjusting the transformer stamps row locations)
             Homoto_G = self.G_pu*Tx
             Homoto_B = self.B_pu*Tx
@@ -250,47 +209,6 @@ class Transformers:
             # where you do need to add extra variables
             trcos = self.tr*np.cos(self.ang*np.pi/180.0)
             trsin = self.tr*np.sin(self.ang*np.pi/180.0)
-            # #I_aux_r leaving lambda_r_from
-            # idx_Y = stampY(self.lambda_r_from, self.Iaux_r_lambda, -1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # # I_aux_i leaving lambda_i_from
-            # idx_Y = stampY(self.lambda_i_from, self.Iaux_i_lambda, -1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # # Vr_from setpoint
-            # idx_Y = stampY(self.Iaux_r_lambda, self.lambda_r_from, 1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Iaux_r_lambda, self.Vaux_r_lambda, -trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Iaux_r_lambda, self.Vaux_i_lambda, trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # # Vi_from setpoint
-            # idx_Y = stampY(self.Iaux_i_lambda, self.lambda_i_from, 1, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Iaux_i_lambda, self.Vaux_r_lambda, -trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Iaux_i_lambda, self.Vaux_i_lambda, -trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # # Vaux_r KCL
-            # idx_Y = stampY(self.Vaux_r_lambda, self.Iaux_r_lambda, trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_r_lambda, self.Iaux_i_lambda, trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_r_lambda, self.Vaux_r_lambda, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_r_lambda, self.lambda_r_to, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_r_lambda, self.Vaux_i_lambda, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_r_lambda, self.lambda_i_to, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_r_lambda, self.Vaux_i_lambda, self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # # Vaux_i KCL
-            # idx_Y = stampY(self.Vaux_i_lambda, self.Iaux_r_lambda, -trsin, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_i_lambda, self.Iaux_i_lambda, trcos, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_i_lambda, self.Vaux_i_lambda, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_i_lambda, self.lambda_i_to, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_i_lambda, self.Vaux_r_lambda, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_i_lambda, self.lambda_r_to, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.Vaux_i_lambda, self.Vaux_r_lambda, -self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            
-            # # Vto losses
-            # idx_Y = stampY(self.lambda_r_to, self.lambda_r_to, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.lambda_r_to, self.Vaux_r_lambda, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)            
-            # idx_Y = stampY(self.lambda_r_to, self.lambda_i_to, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.lambda_r_to, self.Vaux_i_lambda, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.lambda_r_to, self.lambda_i_to, self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-
-            # idx_Y = stampY(self.lambda_i_to, self.lambda_i_to, self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.lambda_i_to, self.Vaux_i_lambda, -self.G_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.lambda_i_to, self.lambda_r_to, -self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.lambda_i_to, self.Vaux_r_lambda, self.B_pu, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-            # idx_Y = stampY(self.lambda_i_to, self.lambda_r_to, -self.Bsh_raw/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         
             ################################################################(trying to flip transformer rows)
             Homoto_G = self.G_pu*Tx

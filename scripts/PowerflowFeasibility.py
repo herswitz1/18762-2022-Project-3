@@ -287,7 +287,7 @@ class PowerFlowFeasibility:
             #  You need to decide the input arguments and return values.
             Y = Ynlin + Ylin + Ylin_D + Ynlin_D
             J = Jnlin + Jlin + Jlin_D + Jnlin_D
-            Ydense = Y.todense() 
+            #Ydense = Y.todense() 
             #print(Ydense)
             if check_for_zero_rows_cols:
                 zero_rows = []
@@ -323,4 +323,4 @@ class PowerFlowFeasibility:
         else:
             print("Maximum iteration count reached before convergence.")
 
-        return v
+        return v_sol

@@ -95,11 +95,12 @@ def solve_feasibility(TESTCASE, SETTINGS):
     #  Circuit Formulation powerflow. The function will return a final solution vector v. Remove run_pf and the if
     #  condition once you've finished building your solver.
     run_feas = True
-    for r in range(1,10):
-        Tx = r/10
-        if run_feas:
+    ###IF UNCOMMENT LINES 99, AND 103 YOU WILL SEE MY ATTEMPT TO IMPLEMENT HOMOTOPY.
+    #for r in range(0,100):
+    Tx = 1 #r/100
+    if run_feas:
             v = feas_solver.run_feas_analysis(v_init, bus, slack, generator, transformer, branch, shunt, load, feasibility_sources,Tx)
-            v_init = v
+            #v_init = v
     # # # Process Results # # #
     # TODO: PART 1, STEP 3 - Write a process_results function to compute the relevant results.
     #  You should display whether or not the case is feasible, and if it isn't, display to the user

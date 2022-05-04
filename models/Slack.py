@@ -56,9 +56,7 @@ class Slack:
         self.Slack_Ir_node = Buses._node_index.__next__()
         print(self.Slack_Ir_node)
         self.Slack_Ii_node = Buses._node_index.__next__()
-        ###DO I NEED TO ADD FEAABILITY NODES(FOR THE TIME WILL EXCLUDE THEM)
-        #self.slack_Ifr_node = Buses._node_index.__next__()
-        #self.slack_Ifi_node = Buses._node_index.__next__()
+        
 
     def assign_dual_nodes(self,bus):
         # You need to implement this

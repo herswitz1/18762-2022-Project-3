@@ -49,9 +49,7 @@ class Buses:
         self.lambda_r_node = None
         self.lambda_i_node = None
         self.lambda_q_node = None
-        #self.lambda_Ifr = None
-        #self.lambda_Ifi = None
-        #self.lambda_Ifq = None
+        
 
         ##DO I NEED TO ADD INITIALIZATIONS FOR INFEASABILITY CURRENTS
 
@@ -85,9 +83,6 @@ class Buses:
             self.node_Vr = self._node_index.__next__()
             self.node_Vi = self._node_index.__next__()
             self.node_Q = self._node_index.__next__()
-            # self.node_Ifr = self._node_index.__next__()
-            # self.node_Ifi = self._node_index.__next__()
-            #self.node_Ifq = self._node_index.__next__()
             print('Bus='+str(self.Bus) +' ' +str(self.node_Vr) + '_real voltage PV ' +  str(self.node_Vi) + '_imganary voltage PV ' + str(self.node_Q) + '_q')
 
         
@@ -104,8 +99,6 @@ class Buses:
         if self.Type == 1 or self.Type == 3:
             self.lambda_r_node = self._node_index.__next__()
             self.lambda_i_node = self._node_index.__next__()
-            # self.lambda_Ifr = self._node_index.__next__()
-            # self.lambda_Ifi = self._node_index.__next__()
             if self.Type ==1:
                 print('Bus='+str(self.Bus) +' ' + str(self.lambda_r_node) + ' dual real voltage PQ index ' +  str(self.lambda_i_node) + ' dual imganary voltage PQ index')
             else:
@@ -115,9 +108,6 @@ class Buses:
             self.lambda_r_node = self._node_index.__next__()
             self.lambda_i_node = self._node_index.__next__()
             self.lambda_q_node = self._node_index.__next__()
-            # self.lambda_Ifr = self._node_index.__next__()
-            # self.lambda_Ifi = self._node_index.__next__()
-            # self.lambda_Ifq = self._node_index.__next__()
             print('Bus='+str(self.Bus) +' ' +str(self.lambda_r_node) + 'dual real lambda PV ' +  str(self.lambda_i_node) + 'dual imganary lambda PV ' + str(self.lambda_q_node) + 'dual lambda_q')
 
         pass
