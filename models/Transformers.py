@@ -211,7 +211,7 @@ class Transformers:
             trsin = self.tr*np.sin(self.ang*np.pi/180.0)
         
             ################################################################(trying to flip transformer rows)
-            Homoto_G = self.G_pu*Tx
+            Homoto_G = self.G_pu*Tx#ATTEMPT AT IMPLEMENTING TX STEPPING: IF Tx IS SET TO 1 THEN FUNCTION LIKE NORMAL(THIS DID NOT UPDATE THIS AS WAS TRYING TO JUST GET 4 BUS CASE TO WORK)
             Homoto_B = self.B_pu*Tx
             Homoto_SH = self.Bsh_raw*Tx
 

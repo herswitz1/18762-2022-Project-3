@@ -39,7 +39,6 @@ class Branches:
         self.rateB = rateB
         self.rateC = rateC
 
-        # Set minimum x: NOT SURE WHAT THIS PART OF THE CODE IS DURING
         if abs(self.x) < 1e-6:
             if self.x < 0:
                 self.x = -1e-6
@@ -69,7 +68,7 @@ class Branches:
     def stamp(self, V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J,Tx):
         if not self.status:
             return (idx_Y, idx_J)
-        Homoto_G = self.G_pu*(20*(1-Tx)) + self.G_pu*Tx
+        Homoto_G = self.G_pu*(20*(1-Tx)) + self.G_pu*Tx#ATTEMPT AT IMPLEMENTING TX STEPPING: IF Tx IS SET TO 1 THEN FUNCTION LIKE NORMAL
         Homoto_B = self.B_pu*(20*(1-Tx)) +self.B_pu*Tx
         Homoto_SH = self.b*(20*(1-Tx)) +self.b*Tx
         # Line Bs
@@ -81,7 +80,6 @@ class Branches:
         idx_Y = stampY(self.lambda_r_to, self.Vi_from_node, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.lambda_i_to, self.Vr_to_node, Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
         idx_Y = stampY(self.lambda_i_to, self.Vr_from_node, -Homoto_B, Ylin_val, Ylin_row, Ylin_col, idx_Y)
-        
         
         # Line Shunts
         idx_Y = stampY(self.lambda_r_from, self.Vi_from_node, -Homoto_SH/2, Ylin_val, Ylin_row, Ylin_col, idx_Y)
@@ -104,10 +102,10 @@ class Branches:
         return (idx_Y, idx_J)
 
     def stamp_dual(self,V, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J,Tx):
-        # You need to implement this.(IMPLEMENTING TRANSPOSE OF THE ABOVE)(negate non G terms)
+        # You need to implement this.(IMPLEMENTING TRANSPOSE OF THE ABOVE)
         if not self.status:
             return (idx_Y, idx_J)
-        Homoto_G = self.G_pu*(20*(1-Tx)) + self.G_pu*Tx
+        Homoto_G = self.G_pu*(20*(1-Tx)) + self.G_pu*Tx #ATTEMPT AT IMPLEMENTING TX STEPPING: IF Tx IS SET TO 1 THEN FUNCTION LIKE NORMAL
         Homoto_B = self.B_pu*(20*(1-Tx)) +self.B_pu*Tx
         Homoto_SH = self.b*(20*(1-Tx)) +self.b*Tx
         # Line Bs lambda

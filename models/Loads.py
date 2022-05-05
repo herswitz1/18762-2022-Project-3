@@ -151,8 +151,6 @@ class Loads:
         idx_Y = stampY(self.Vi_node, self.lambda_i_node, dL2_dVi_dlambda_i, Y_val, Y_row, Y_col, idx_Y)#power flow transpose
         idx_J = stampJ(self.Vi_node, LAG_IL_J_stamp, J_val, J_row, idx_J)
         
-        
-
         return (idx_Y, idx_J)
 
     def calc_residuals(self, resid, V):

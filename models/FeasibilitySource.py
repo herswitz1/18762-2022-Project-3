@@ -29,12 +29,10 @@ class FeasibilitySource:
         """
         # TODO: You decide how to implement variables for the feasibility injections
         #I 
-        ###SOMETHING FEELS OFF HERE not sure if I am assigning nodes or adding more
         self.Vr_node = bus[Buses.bus_key_[self.Bus]].node_Vr
         self.Vi_node = bus[Buses.bus_key_[self.Bus]].node_Vi
         self.Ifr_node = bus[Buses.bus_key_[self.Bus]].lambda_r_node#since power flow equations are with respect to lambda row
         self.Ifi_node = bus[Buses.bus_key_[self.Bus]].lambda_i_node
-        #self.Ifq_PV = bus[Buses.bus_key_[self.Bus]].node_Vi
         ###EACH BUS INCLUDING SLACK GETS AN INFEASABILITY CURRENT
         self.lambda_Ifr_node = Buses._node_index.__next__()
         print(self.lambda_Ifr_node)
@@ -42,14 +40,9 @@ class FeasibilitySource:
         pass
 
     def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
-        # You need to implement this.
-        #needs to add a one stamp for each row with
-        
         idx_Y = stampY(self.Ifr_node, self.lambda_Ifr_node, 1, Y_val, Y_row, Y_col, idx_Y)#power flow
         idx_Y = stampY(self.Ifi_node, self.lambda_Ifi_node, 1, Y_val, Y_row, Y_col, idx_Y)#power flow
-       
-        
-
+    
         return (idx_Y, idx_J)
 
     def stamp_dual(self,V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J):
@@ -59,7 +52,7 @@ class FeasibilitySource:
         idx_Y = stampY(self.lambda_Ifr_node, self.lambda_Ifr_node, 2, Y_val, Y_row, Y_col, idx_Y)
         idx_Y = stampY(self.lambda_Ifi_node, self.lambda_Ifi_node, 2, Y_val, Y_row, Y_col, idx_Y)
         return (idx_Y, idx_J)
-        #pass
+        
     def calc_residuals(self, resid, V):
         resid[self.Vr_node] += V[self.lambda_Ifr_node]
         resid[self.Vi_node] += V[self.lambda_Ifi_node]

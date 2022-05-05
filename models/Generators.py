@@ -72,10 +72,6 @@ class Generators:
         self.Vi_node = bus[Buses.bus_key_[self.Bus]].node_Vi
         # run check to make sure the bus actually has a Q node
         self.Q_node = bus[Buses.bus_key_[self.Bus]].node_Q
-        # check something about gen_type?? 
-        #self.Ifr_node = bus[Buses.bus_key_[self.Bus]].node_Ifr
-        #self.Ifi_node = bus[Buses.bus_key_[self.Bus]].node_Ifi
-        #self.Ifq_node = bus[Buses.bus_key_[self.Bus]].node_Ifq
 
         ##ASSIGNING THE LAMBDA
         self.lambda_r_node = bus[Buses.bus_key_[self.Bus]].lambda_r_node
@@ -212,7 +208,6 @@ class Generators:
         idx_Y = stampY(self.Q_node, self.lambda_i_node, dL2_dQ_dlambda_i, Y_val, Y_row, Y_col, idx_Y)
         idx_J = stampJ(self.Q_node, LAG_Qg_history, J_val, J_row, idx_J)
 
- 
         return (idx_Y, idx_J)
 
     def calc_residuals(self, resid, V):

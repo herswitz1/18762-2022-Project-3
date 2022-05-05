@@ -63,7 +63,6 @@ class PowerFlowFeasibility:
             (idx_Y, idx_J) = ele.stamp(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J,Tx)
         for ele in slack:
             (idx_Y, idx_J) = ele.stamp(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
-        ##NOT SURE ABOUT THE FEASIBILITY SOURCE
         for ele in feasibility_sources:
             (idx_Y, idx_J) = ele.stamp(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
         
@@ -97,7 +96,6 @@ class PowerFlowFeasibility:
             (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J,Tx)
         for ele in slack:
             (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
-        ##NOT SURE ABOUT THE FEASIBILITY SOURCE
         for ele in feasibility_sources:
             (idx_Y, idx_J) = ele.stamp_dual(v_init, Ylin_val, Ylin_row, Ylin_col, Jlin_val, Jlin_row, idx_Y, idx_J)
         
@@ -155,7 +153,7 @@ class PowerFlowFeasibility:
             (idx_Y, idx_J) = ele.stamp_dual(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
         for ele in load:
             (idx_Y, idx_J) = ele.stamp_dual(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
-        ##NOT SURE ABOUT THE FEASIBILITY SOURCE
+        ##THE FEASIBILITY SOURCE is no needed here
         # for ele in feasibility_sources:
         #     (idx_Y, idx_J) = ele.stamp_dual(v_init, Ynlin_val, Ynlin_row, Ynlin_col, Jnlin_val, Jnlin_row, idx_Y, idx_J)
 

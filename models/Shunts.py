@@ -65,7 +65,7 @@ class Shunts:
 
     def stamp(self, V, Y_val, Y_row, Y_col, J_val, J_row, idx_Y, idx_J,Tx):
        
-        Homoto_G = self.G_pu*(20*(1-Tx)) + self.G_pu*Tx
+        Homoto_G = self.G_pu*(20*(1-Tx)) + self.G_pu*Tx#ATTEMPT AT IMPLEMENTING TX STEPPING: IF Tx IS SET TO 1 THEN FUNCTION LIKE NORMAL
         Homoto_B = self.B_pu*(20*(1-Tx)) +self.B_pu*Tx
         
        ###############
